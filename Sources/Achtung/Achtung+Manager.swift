@@ -59,7 +59,7 @@ extension Achtung {
 			Button(label: label, kind: .normal, action: action)
 		}
 		
-		public static func cancel(_ label: Text = Text(String.Cancel), action: (() -> Void)? = {}) -> Button {
+		public static func cancel(_ label: Text = Text("Cancel"), action: (() -> Void)? = {}) -> Button {
 			Button(label: label, kind: .cancel, action: action)
 		}
 		

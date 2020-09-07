@@ -71,7 +71,7 @@ extension Achtung {
 							.multilineTextAlignment(.center)
 							.lineLimit(nil)
 							.foregroundColor(.white)
-							.padding(3)
+							.padding(5)
 							.frame(maxWidth: 250)
 					}
 
@@ -81,7 +81,7 @@ extension Achtung {
 							.multilineTextAlignment(.center)
 							.lineLimit(nil)
 							.foregroundColor(.white)
-							.padding(3)
+							.padding(5)
 							.frame(maxWidth: 250)
 					}
 					
@@ -101,10 +101,11 @@ extension Achtung {
 									.font(.callout)
 									.multilineTextAlignment(.center)
 									.foregroundColor(.white)
-									.padding(.vertical, 3)
-									.frame(minWidth: 220)
+									.padding(.vertical, 5)
+									.frame(minWidth: 220, minHeight: 40)
 									.layoutPriority(1)
 							}
+							.padding(3)
 						}
 					}
 				}
