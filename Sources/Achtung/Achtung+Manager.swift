@@ -20,10 +20,10 @@ extension Achtung {
 		
 		@Published var pendingAlerts: [Achtung] = []
 		
-		public func show(title: Text? = nil, message: Text? = nil, tag: String? = nil, buttons: [Achtung.Button]) {
+        public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
 			guard title != nil || message != nil || buttons.isEmpty == false else { return }
 			
-			let alert = Achtung(title: title, message: message, tag: tag, buttons: buttons)
+			let alert = Achtung(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, buttons: buttons)
 			DispatchQueue.main.async {
 				if self.pendingAlerts.isEmpty {
 					withAnimation() {

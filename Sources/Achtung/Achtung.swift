@@ -16,23 +16,29 @@ public struct Achtung: Identifiable, Equatable {
 	var title: Text?
 	var message: Text?
 	let buttons: [Achtung.Button]
+    let fieldText: Binding<String>?
+    let fieldPlaceholder: String
 	
 	func buttonPressed() {
 		Achtung.manager.remove(self)
 	}
 	
-	public init(title: Text? = nil, message: Text? = nil, tag: String? = nil, buttons: [Achtung.Button]) {
+    public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
 		self.title = title
 		self.message = message
 		self.tag = tag
 		self.buttons = buttons
+        self.fieldText = fieldText
+        self.fieldPlaceholder = fieldPlaceholder
 	}
 
-	public init(title: Text? = nil, message: Text? = nil, tag: String? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
+	public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
 		self.title = title
 		self.message = message
 		self.tag = tag
 		self.buttons = [primaryButton, secondaryButton, dismissButton].compactMap { $0 }
+        self.fieldText = fieldText
+        self.fieldPlaceholder = fieldPlaceholder
 	}
 
 	public static func ==(lhs: Achtung, rhs: Achtung) -> Bool { lhs.id == rhs.id }
@@ -53,6 +59,8 @@ public extension View {
 extension Achtung {
 	struct AlertView: View {
 		let alert: Achtung
+        let foreground: Color = .white
+        let borderColor: Color = .white
 		
 		let radius: CGFloat = 8
 		
@@ -62,7 +70,7 @@ extension Achtung {
 					.fill(Color.black.opacity(0.9))
 				
 				RoundedRectangle(cornerRadius: radius)
-					.stroke(Color.white.opacity(0.9))
+					.stroke(borderColor.opacity(0.9))
 				
 				VStack() {
 					if alert.title != nil {
@@ -70,7 +78,7 @@ extension Achtung {
 							.font(.headline)
 							.multilineTextAlignment(.center)
 							.lineLimit(nil)
-							.foregroundColor(.white)
+							.foregroundColor(foreground)
 							.padding(5)
 							.frame(maxWidth: 250)
 					}
@@ -80,10 +88,19 @@ extension Achtung {
 							.font(.body)
 							.multilineTextAlignment(.center)
 							.lineLimit(nil)
-							.foregroundColor(.white)
+							.foregroundColor(foreground)
 							.padding(5)
 							.frame(maxWidth: 250)
 					}
+                    
+                    if let text = alert.fieldText {
+                        TextField(alert.fieldPlaceholder, text: text)
+                            .foregroundColor(foreground)
+                            .font(.body)
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 3).stroke(borderColor, lineWidth: 0.5))
+                            .padding()
+                    }
 					
 					ForEach(alert.buttons) { button in
 						SwiftUI.Button(action: {
@@ -95,12 +112,12 @@ extension Achtung {
 									.fill(Color.black.opacity(0.9))
 								
 								RoundedRectangle(cornerRadius: self.radius)
-									.stroke(Color.white.opacity(0.9))
+									.stroke(borderColor.opacity(0.9))
 								
 								button.label
 									.font(.callout)
 									.multilineTextAlignment(.center)
-									.foregroundColor(.white)
+									.foregroundColor(foreground)
 									.padding(.vertical, 5)
 									.frame(minWidth: 220, minHeight: 40)
 									.layoutPriority(1)
