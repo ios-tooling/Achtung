@@ -102,36 +102,46 @@ extension Achtung {
                             .padding()
                     }
 					
-					ForEach(alert.buttons) { button in
-						SwiftUI.Button(action: {
-							button.pressed()
-							self.alert.buttonPressed()
-						}) {
-							ZStack() {
-								RoundedRectangle(cornerRadius: self.radius)
-									.fill(Color.black.opacity(0.9))
-								
-								RoundedRectangle(cornerRadius: self.radius)
-									.stroke(borderColor.opacity(0.9))
-								
-								button.label
-									.font(.callout)
-									.multilineTextAlignment(.center)
-									.foregroundColor(foreground)
-									.padding(.vertical, 5)
-									.frame(minWidth: 220, minHeight: 40)
-									.layoutPriority(1)
-							}
-							.padding(3)
-						}
-					}
-				}
+                    if alert.buttons.count <= 2 {
+                        HStack() { buttonViews(minWidth: 120) }
+                    } else {
+                        buttonViews(minWidth: 220)
+                    }
+                }
 				.padding(10)
 				.layoutPriority(1)
 			}
+            .padding(20)
 			.transition(AnyTransition.scale)
 		}
-	}
+
+        func buttonViews(minWidth: CGFloat) -> some View {
+            ForEach(alert.buttons) { button in
+                SwiftUI.Button(action: {
+                    button.pressed()
+                    self.alert.buttonPressed()
+                }) {
+                    ZStack() {
+                        RoundedRectangle(cornerRadius: self.radius)
+                            .fill(Color.black.opacity(0.9))
+                        
+                        RoundedRectangle(cornerRadius: self.radius)
+                            .stroke(borderColor.opacity(0.9))
+                        
+                        button.label
+                            .font(.callout)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(foreground)
+                            .padding(.vertical, 5)
+                            .frame(minWidth: minWidth, minHeight: 40)
+                            .layoutPriority(1)
+                    }
+                    .padding(3)
+                }
+            }
+        }
+        
+    }
 }
 
 
