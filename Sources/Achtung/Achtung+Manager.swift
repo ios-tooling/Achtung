@@ -14,7 +14,7 @@ extension Achtung {
 	public static let manager = Manager()
 	
 	public class Manager: ObservableObject {
-		fileprivate init() {
+		public init() {
 			
 		}
 		
@@ -23,7 +23,7 @@ extension Achtung {
         public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
 			guard title != nil || message != nil || buttons.isEmpty == false else { return }
 			
-			let alert = Achtung(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, buttons: buttons)
+			let alert = Achtung(achtung: self, title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, buttons: buttons)
 			DispatchQueue.main.async {
 				if self.pendingAlerts.isEmpty {
 					withAnimation() {
@@ -70,18 +70,27 @@ extension Achtung {
 	}
 }
 
+@available(OSX 10.15, iOS 13.0, *)
+public protocol AchtungAlertableView: View {
+	var achtung: Achtung.Manager? { get }
+}
 
-
+@available(OSX 10.15, iOS 13.0, *)
+extension AchtungAlertableView {
+	public func achtung(title: Text? = nil, message: Text? = nil, tag: String? = nil, buttons: [Achtung.Button]) {
+		(achtung ?? Achtung.manager).show(title: title, message: message, tag: tag, buttons: buttons)
+	}
+}
 
 
 @available(OSX 10.15, iOS 13.0, *)
 public struct AchtungKey: EnvironmentKey {
-	public static let defaultValue: Achtung.Manager = Achtung.manager
+	public static let defaultValue: Achtung.Manager? = nil
 }
 
 @available(OSX 10.15, iOS 13.0, *)
-extension EnvironmentValues {
-	var achtung: Achtung.Manager {
+public extension EnvironmentValues {
+	var achtung: Achtung.Manager? {
 		get { return self[AchtungKey.self] }
 		set { self[AchtungKey.self] = newValue }
 	}

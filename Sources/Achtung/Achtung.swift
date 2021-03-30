@@ -11,6 +11,7 @@ import Combine
 
 @available(OSX 10.15, iOS 13.0, *)
 public struct Achtung: Identifiable, Equatable {
+	let manager: Achtung.Manager
 	public let id = UUID()
 	var tag: String?
 	var title: Text?
@@ -20,10 +21,11 @@ public struct Achtung: Identifiable, Equatable {
     let fieldPlaceholder: String
 	
 	func buttonPressed() {
-		Achtung.manager.remove(self)
+		manager.remove(self)
 	}
 	
-    public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
+    public init(achtung: Achtung.Manager, title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
+		self.manager = achtung
 		self.title = title
 		self.message = message
 		self.tag = tag
@@ -32,7 +34,8 @@ public struct Achtung: Identifiable, Equatable {
         self.fieldPlaceholder = fieldPlaceholder
 	}
 
-	public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
+	public init(achtung: Achtung.Manager, title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
+		self.manager = achtung
 		self.title = title
 		self.message = message
 		self.tag = tag
@@ -45,10 +48,10 @@ public struct Achtung: Identifiable, Equatable {
 }
 
 @available(OSX 10.15, iOS 13.0, *)
-public extension View {
+public extension AchtungAlertableView {
 	func achtung<Item: Identifiable>(item target: Binding<Item?>, content: (Item) -> Achtung?) -> some View {
 		if let item = target.wrappedValue, let alert = content(item) {
-			Achtung.manager.show(title: alert.title, message: alert.message, tag: alert.tag, buttons: alert.buttons)
+			achtung(title: alert.title, message: alert.message, tag: alert.tag, buttons: alert.buttons)
 			DispatchQueue.main.async { target.wrappedValue = nil }
 		}
 		return self
@@ -61,6 +64,7 @@ extension Achtung {
 		let alert: Achtung
         let foreground: Color = .white
         let borderColor: Color = .white
+		let manager: Achtung.Manager
 		
 		let radius: CGFloat = 8
 		
