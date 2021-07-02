@@ -90,6 +90,7 @@ extension Achtung {
 					if alert.message != nil {
 						alert.message!
 							.font(.body)
+							.fixedSize(horizontal: false, vertical: true)
 							.multilineTextAlignment(.center)
 							.lineLimit(nil)
 							.foregroundColor(foreground)

@@ -30,9 +30,7 @@ extension Achtung {
 		
 		public var body: some View {
 			Group() {
-				if alertive.pendingAlerts.isEmpty {
-					EmptyView()
-				} else {
+				if !alertive.pendingAlerts.isEmpty {
 					ZStack() {
 						Rectangle()
 							.fill(Color.black.opacity(0.5))
