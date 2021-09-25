@@ -20,9 +20,10 @@ extension Achtung {
 		
 		@Published var pendingAlerts: [Achtung] = []
 		
-        public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
+		public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
 			guard title != nil || message != nil || buttons.isEmpty == false else { return }
-			
+			if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
+
 			let alert = Achtung(achtung: self, title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, buttons: buttons)
 			DispatchQueue.main.async {
 				if self.pendingAlerts.isEmpty {
@@ -66,7 +67,7 @@ extension Achtung {
 		public static func destructive(_ label: Text, _ action: (() -> Void)? = {}) -> Button {
 			Button(label: label, kind: .destructive, action: action)
 		}
-
+		
 	}
 }
 
