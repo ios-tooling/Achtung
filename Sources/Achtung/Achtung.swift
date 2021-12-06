@@ -10,61 +10,39 @@ import SwiftUI
 import Combine
 
 @available(OSX 10.15, iOS 13.0, *)
-public struct Achtung: Identifiable, Equatable {
-	let manager: Achtung.Manager
-	public let id = UUID()
-	var tag: String?
-	var title: Text?
-	var message: Text?
-	let buttons: [Achtung.Button]
-    let fieldText: Binding<String>?
-    let fieldPlaceholder: String
-	
-	func buttonPressed() {
-		manager.remove(self)
+public class Achtung: ObservableObject {
+	public static let instance = Achtung()
+	var hostWindow: UIWindow?
+	@Published var pendingAlerts: [Achtung.Alert] = []
+
+	private init() {
+		
 	}
 	
-    public init(achtung: Achtung.Manager, title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
-		self.manager = achtung
-		self.title = title
-		self.message = message
-		self.tag = tag
-		self.buttons = buttons
-        self.fieldText = fieldText
-        self.fieldPlaceholder = fieldPlaceholder
-	}
-
-	public init(achtung: Achtung.Manager, title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
-		self.manager = achtung
-		self.title = title
-		self.message = message
-		self.tag = tag
-		self.buttons = [primaryButton, secondaryButton, dismissButton].compactMap { $0 }
-        self.fieldText = fieldText
-        self.fieldPlaceholder = fieldPlaceholder
-	}
-
-	public static func ==(lhs: Achtung, rhs: Achtung) -> Bool { lhs.id == rhs.id }
-}
-
-@available(OSX 10.15, iOS 13.0, *)
-public extension AchtungAlertableView {
-	func achtung<Item: Identifiable>(item target: Binding<Item?>, content: (Item) -> Achtung?) -> some View {
-		if let item = target.wrappedValue, let alert = content(item) {
-			achtung(title: alert.title, message: alert.message, tag: alert.tag, buttons: alert.buttons)
-			DispatchQueue.main.async { target.wrappedValue = nil }
+	public func setup(in scene: UIWindowScene? = nil) {
+		DispatchQueue.main.async {
+			self.add(toScene: scene)
 		}
-		return self
 	}
 }
 
+//@available(OSX 10.15, iOS 13.0, *)
+//public extension AchtungAlertableView {
+//	func achtung<Item: Identifiable>(item target: Binding<Item?>, content: (Item) -> Achtung.Alert?) -> some View {
+//		if let item = target.wrappedValue, let alert = content(item) {
+//			achtung(title: alert.title, message: alert.message, tag: alert.tag, buttons: alert.buttons)
+//			DispatchQueue.main.async { target.wrappedValue = nil }
+//		}
+//		return self
+//	}
+//}
+
 @available(OSX 10.15, iOS 13.0, *)
-extension Achtung {
+extension Achtung.Alert {
 	struct AlertView: View {
-		let alert: Achtung
-        let foreground: Color = .white
-        let borderColor: Color = .white
-		let manager: Achtung.Manager
+		let alert: Achtung.Alert
+		let foreground: Color = .white
+		let borderColor: Color = .white
 		
 		let radius: CGFloat = 8
 		
@@ -147,13 +125,5 @@ extension Achtung {
         }
         
     }
-}
-
-
-@available(OSX 10.15, iOS 13.0, *)
-struct Achtung_Previews: PreviewProvider {
-	static var previews: some View {
-		Achtung.container()
-	}
 }
 #endif
