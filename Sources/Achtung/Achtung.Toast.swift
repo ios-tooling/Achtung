@@ -8,14 +8,16 @@
 import SwiftUI
 
 public extension Achtung {
+	static let onScreenTime: TimeInterval = 4
+	static let showDuration: TimeInterval = 0.5
+	static let hideDuration: TimeInterval = 0.4
+
 	struct Toast {
-		static let onScreenTime: TimeInterval = 4
-		static let showDuration: TimeInterval = 0.5
-		static let hideDuration: TimeInterval = 0.4
 
 		public var title: String
 		public var body: String?
 		public var error: Error?
+		public let leading: AnyView?
 		
 		public var duration: TimeInterval
 		
@@ -27,11 +29,20 @@ public extension Achtung {
 		public var titleFont = Font.system(size: 14, weight: .semibold)
 		
 		
+		public init<Leading: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leadingView: () -> Leading) {
+			self.init(title: title, body: body, error: error, duration: duration, leading: AnyView(leadingView()))
+		}
+		
 		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil) {
+			self.init(title: title, body: body, error: error, duration: duration, leading: nil)
+		}
+		
+		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leading: AnyView?) {
 			self.title = title
-			self.duration = duration ?? Achtung.Toast.onScreenTime
+			self.duration = duration ?? Achtung.onScreenTime
 			self.body = error?.localizedDescription ?? body
 			self.error = error
+			self.leading = leading
 		}
 		
 		static let sample = Achtung.Toast(title: "Look at me!")

@@ -32,7 +32,7 @@ public class Achtung: ObservableObject {
 	
 	func showNextToast() {
 		if currentToast == nil, let next = toasts.first {
-			withAnimation(.easeOut(duration: Achtung.Toast.showDuration)) {
+			withAnimation(.easeOut(duration: Achtung.showDuration)) {
 				currentToast = next
 			}
 			DispatchQueue.main.asyncAfter(deadline: .now() + next.duration) {
@@ -44,10 +44,10 @@ public class Achtung: ObservableObject {
 	
 	func dismissCurrentToast() {
 		if currentToast != nil {
-			withAnimation(.easeIn(duration: Achtung.Toast.hideDuration)) {
+			withAnimation(.easeIn(duration: Achtung.hideDuration)) {
 				currentToast = nil
 			}
-			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.Toast.hideDuration, repeats: false) { _ in
+			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideDuration, repeats: false) { _ in
 				self.showNextToast()
 			}
 		}

@@ -12,13 +12,18 @@ extension Achtung {
 		let toast: Achtung.Toast
 		var body: some View {
 			ZStack(alignment: .top) {
-				Text(toast.title)
-					.font(toast.titleFont)
-					.padding(.horizontal, 16)
-					.padding(.vertical, 8)
-					.foregroundColor(toast.textColor)
-					.background(backgroundView)
-					.padding()
+				HStack() {
+					if let leading = toast.leading {
+						leading
+					}
+					Text(toast.title)
+				}
+				.font(toast.titleFont)
+				.padding(.horizontal, 16)
+				.padding(.vertical, 8)
+				.foregroundColor(toast.textColor)
+				.background(backgroundView)
+				.multilineTextAlignment(.center)
 			}
 			.frame(maxHeight: .infinity, alignment: .top)
 			.transition(.move(edge: .top))
