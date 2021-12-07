@@ -11,6 +11,16 @@ import Combine
 
 @available(OSX 10.15, iOS 13.0, *)
 extension Achtung {
+	
+	public func show(toast: Toast) {
+		if !isSetup() { return }
+
+		DispatchQueue.main.async {
+			self.toasts.append(toast)
+			if self.nextToastTimer == nil { self.showNextToast() }
+		}
+	}
+
 	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
 		if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }

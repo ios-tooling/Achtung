@@ -12,6 +12,14 @@ import UIKit
 
 @available(OSX 10.15, iOS 13.0, *)
 public extension Achtung {
+	func isSetup() -> Bool {
+		if hostWindow == nil {
+			print("#### Achtung was not successfully set up. Please call Achtung.instance.setup(scene:) at init time ###")
+			return false
+		}
+		return true
+	}
+	
 	func add(toScene: UIWindowScene?) {
 		if hostWindow != nil { return }				 // already added
 		guard let scene = toScene ?? firstWindowScene else {
