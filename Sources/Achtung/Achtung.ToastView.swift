@@ -29,6 +29,7 @@ extension Achtung {
 			.transition(.move(edge: .top))
 			.zIndex(100)
 			.onTapGesture {
+				if let action = toast.tapAction { action() }
 				Achtung.instance.dismissCurrentToast()
 			}
 		}

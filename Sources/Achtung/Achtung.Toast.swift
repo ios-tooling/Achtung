@@ -27,22 +27,24 @@ public extension Achtung {
 		public var borderWidth: CGFloat = 2
 		public var cornerRadius: CGFloat = 8
 		public var titleFont = Font.system(size: 14, weight: .semibold)
+		public var tapAction: (() -> Void)?
 		
 		
-		public init<Leading: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leadingView: () -> Leading) {
-			self.init(title: title, body: body, error: error, duration: duration, leading: AnyView(leadingView()))
+		public init<Leading: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leadingView: () -> Leading, tapAction: (() -> Void)? = nil) {
+			self.init(title: title, body: body, error: error, duration: duration, leading: AnyView(leadingView()), tapAction: tapAction)
 		}
 		
-		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil) {
-			self.init(title: title, body: body, error: error, duration: duration, leading: nil)
+		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, tapAction: (() -> Void)? = nil) {
+			self.init(title: title, body: body, error: error, duration: duration, leading: nil, tapAction: tapAction)
 		}
 		
-		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leading: AnyView?) {
+		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leading: AnyView?, tapAction: (() -> Void)? = nil) {
 			self.title = title
 			self.duration = duration ?? Achtung.onScreenTime
 			self.body = error?.localizedDescription ?? body
 			self.error = error
 			self.leading = leading
+			self.tapAction = tapAction
 		}
 		
 		static let sample = Achtung.Toast(title: "Look at me!")
