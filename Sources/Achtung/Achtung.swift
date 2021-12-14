@@ -25,8 +25,12 @@ public class Achtung: ObservableObject {
 	}
 	
 	public func setup(in scene: UIWindowScene? = nil) {
-		DispatchQueue.main.async {
+		if let scene = scene {
 			self.add(toScene: scene)
+		} else {
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+				self.add(toScene: nil)
+			}
 		}
 	}
 	
