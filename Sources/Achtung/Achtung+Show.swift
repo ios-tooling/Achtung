@@ -21,6 +21,11 @@ extension Achtung {
 		}
 	}
 
+    public func show(title: String, error: Error, buttons: [Achtung.Button]? = nil) {
+        show(title: Text(title), message: Text(error.localizedDescription), buttons: buttons ?? [.ok()])
+    }
+
+    
 	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
 		if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
@@ -61,10 +66,14 @@ extension Achtung {
 			Button(label: label, kind: .normal, action: action)
 		}
 		
-		public static func cancel(_ label: Text = Text("Cancel"), action: (() -> Void)? = {}) -> Button {
-			Button(label: label, kind: .cancel, action: action)
-		}
-		
+        public static func ok(_ label: Text = Text("OK"), action: (() -> Void)? = {}) -> Button {
+            Button(label: label, kind: .normal, action: action)
+        }
+        
+        public static func cancel(_ label: Text = Text("Cancel"), action: (() -> Void)? = {}) -> Button {
+            Button(label: label, kind: .cancel, action: action)
+        }
+        
 		public static func destructive(_ label: Text, _ action: (() -> Void)? = {}) -> Button {
 			Button(label: label, kind: .destructive, action: action)
 		}
