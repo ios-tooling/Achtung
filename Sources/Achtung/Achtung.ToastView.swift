@@ -16,7 +16,16 @@ extension Achtung {
 					if let leading = toast.leading {
 						leading
 					}
-					Text(toast.title)
+                    VStack(alignment: .leading) {
+                        Text(toast.title)
+                        if let body = toast.body {
+                            Text(body)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(3)
+                                .font(toast.bodyFont)
+                                .opacity(0.8)
+                        }
+                    }
 				}
 				.font(toast.titleFont)
 				.padding(.horizontal, 16)
