@@ -6,6 +6,7 @@
 //
 
 #if canImport(Combine)
+#if os(iOS)
 import SwiftUI
 import Combine
 
@@ -46,4 +47,5 @@ extension Achtung {
 	}
 }
 
+#endif
 #endif

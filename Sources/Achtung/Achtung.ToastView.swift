@@ -1,9 +1,11 @@
 //
-//  File.swift
+//  Achtung.ToastView.swift
 //  
 //
 //  Created by Ben Gottlieb on 12/7/21.
 //
+
+#if os(iOS)
 
 import SwiftUI
 
@@ -64,3 +66,4 @@ struct ToastView_Previews: PreviewProvider {
 		}
 	}
 }
+#endif

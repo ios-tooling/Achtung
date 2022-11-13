@@ -6,6 +6,8 @@
 //
 
 #if canImport(Combine)
+#if os(iOS)
+
 import SwiftUI
 import Combine
 
@@ -70,4 +72,5 @@ public class Achtung: ObservableObject {
 //	}
 //}
 
+#endif
 #endif

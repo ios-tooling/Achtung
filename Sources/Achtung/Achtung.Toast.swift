@@ -5,6 +5,8 @@
 //  Created by Ben Gottlieb on 12/7/21.
 //
 
+#if os(iOS)
+
 import SwiftUI
 
 public extension Achtung {
@@ -51,3 +53,4 @@ public extension Achtung {
 		static let sample = Achtung.Toast(title: "Look at me!")
 	}
 }
+#endif

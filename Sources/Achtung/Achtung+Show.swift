@@ -6,6 +6,8 @@
 //
 
 #if canImport(Combine)
+#if os(iOS)
+
 import SwiftUI
 import Combine
 
@@ -88,4 +90,5 @@ extension View {
 	}
 }
 
+#endif
 #endif
