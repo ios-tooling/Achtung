@@ -8,11 +8,19 @@
 import Foundation
 
 public extension Achtung {
-	func show(_ error: Error?, message: String? = nil) {
+	enum ErrorLevel: Int, Comparable { case debug, testing, standard
+		public static func <(lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
+	}
+}
+
+public extension Achtung {
+	func show(_ error: Error?, level: ErrorLevel = .testing, message: String? = nil) {
 		guard let error else { return }
 		
-		let toast = Toast(title: message ?? "An error occurred", body: nil, error: error)
-		show(toast: toast)
+		if level >= errorDisplayLevel {
+			let toast = Toast(title: message ?? "An error occurred", body: nil, error: error)
+			show(toast: toast)
+		}
 		print("⚠️ \(message ?? "Achtung"): \(error)")
 	}
 }

@@ -17,7 +17,8 @@ public class Achtung: ObservableObject {
 	var hostWindow: UIWindow?
 	var toasts: [Toast] = []
 	weak var nextToastTimer: Timer?
-
+	public var errorDisplayLevel = ErrorLevel.standard
+	
 	
 	@Published var currentToast: Toast?
 	@Published var pendingAlerts: [Achtung.Alert] = []
