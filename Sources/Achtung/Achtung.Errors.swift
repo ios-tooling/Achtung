@@ -14,6 +14,14 @@ public extension Achtung {
 }
 
 public extension Achtung {
+	static func `do`(level: ErrorLevel = .testing, message: String? = nil, _ block: () throws -> Void) {
+		do {
+			try block()
+		} catch {
+			instance.show(error, level: level, message: message)
+		}
+	}
+	
 	func show(_ error: Error?, level: ErrorLevel = .testing, message: String? = nil) {
 		guard let error else { return }
 		
