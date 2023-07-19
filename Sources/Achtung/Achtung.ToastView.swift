@@ -1,6 +1,6 @@
 //
 //  Achtung.ToastView.swift
-//  
+//
 //
 //  Created by Ben Gottlieb on 12/7/21.
 //
@@ -18,23 +18,23 @@ extension Achtung {
 					if let leading = toast.leading {
 						leading
 					}
-                    VStack(alignment: .leading) {
-                        Text(toast.title)
-                        if let body = toast.body {
-                            Text(body)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(3)
-                                .font(toast.bodyFont)
-                                .opacity(0.8)
-                        }
-                    }
+					VStack(alignment: .leading) {
+						Text(toast.title)
+						if let body = toast.body {
+							Text(body)
+								.multilineTextAlignment(.leading)
+								.lineLimit(3)
+								.font(toast.bodyFont)
+								.opacity(0.8)
+						}
+					}
 				}
 				.font(toast.titleFont)
-				.padding(.horizontal, 16)
-				.padding(.vertical, 8)
+				.padding()
 				.foregroundColor(toast.textColor)
 				.background(backgroundView)
 				.multilineTextAlignment(.center)
+				.padding(4)
 			}
 			.frame(maxHeight: .infinity, alignment: .top)
 			.transition(.move(edge: .top))
@@ -54,8 +54,8 @@ extension Achtung {
 			}
 		}
 	}
-
-
+	
+	
 }
 
 struct ToastView_Previews: PreviewProvider {

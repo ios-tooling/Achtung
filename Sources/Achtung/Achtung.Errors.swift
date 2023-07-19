@@ -22,7 +22,7 @@ public extension Achtung {
 		}
 	}
 	
-	func show(_ error: Error?, level: ErrorLevel = .testing, message: String? = nil) {
+	func show(_ error: Error?, level: ErrorLevel = .standard, message: String? = nil) {
 		guard let error else { return }
 		
 		if level >= errorDisplayLevel {
