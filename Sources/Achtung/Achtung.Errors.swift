@@ -7,6 +7,8 @@
 
 import Foundation
 
+#if os(iOS)
+
 public extension Achtung {
 	enum ErrorLevel: Int, Comparable { case debug, testing, standard
 		public static func <(lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
@@ -32,3 +34,5 @@ public extension Achtung {
 		print("⚠️ \(message ?? "Achtung"): \(error)")
 	}
 }
+
+#endif
