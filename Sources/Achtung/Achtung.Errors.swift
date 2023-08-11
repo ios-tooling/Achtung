@@ -24,6 +24,16 @@ public extension Achtung {
 		}
 	}
 	
+	static func `do`(level: ErrorLevel = .testing, message: String? = nil, _ block: @escaping () async throws -> Void) {
+		Task {
+			do {
+				try await block()
+			} catch {
+				instance.show(error, level: level, message: message)
+			}
+		}
+	}
+	
 	func show(_ error: Error?, level: ErrorLevel = .standard, message: String? = nil) {
 		guard let error else { return }
 		
