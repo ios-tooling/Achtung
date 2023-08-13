@@ -6,7 +6,6 @@
 //
 
 #if canImport(Combine)
-#if os(iOS)
 
 import SwiftUI
 import Combine
@@ -14,7 +13,9 @@ import Combine
 @available(OSX 10.15, iOS 13.0, *)
 public class Achtung: ObservableObject {
 	public static let instance = Achtung()
-	var hostWindow: UIWindow?
+	#if os(iOS)
+		var hostWindow: UIWindow?
+	#endif
 	var toasts: [Toast] = []
 	weak var nextToastTimer: Timer?
 	public var errorDisplayLevel = ErrorLevel.standard
@@ -27,15 +28,17 @@ public class Achtung: ObservableObject {
 		
 	}
 	
-	public func setup(in scene: UIWindowScene? = nil) {
-		if let scene = scene {
-			self.add(toScene: scene)
-		} else {
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-				self.add(toScene: nil)
+	#if os(iOS)
+		public func setup(in scene: UIWindowScene? = nil) {
+			if let scene = scene {
+				self.add(toScene: scene)
+			} else {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					self.add(toScene: nil)
+				}
 			}
 		}
-	}
+	#endif
 	
 	func showNextToast() {
 		if currentToast == nil, let next = toasts.first {
@@ -74,4 +77,4 @@ public class Achtung: ObservableObject {
 //}
 
 #endif
-#endif
+

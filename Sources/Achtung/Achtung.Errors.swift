@@ -7,13 +7,14 @@
 
 import Foundation
 
-#if os(iOS)
-
 public extension Achtung {
 	enum ErrorLevel: Int, Comparable { case debug, testing, standard
 		public static func <(lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
 	}
 }
+
+
+#if os(iOS)
 
 public extension Achtung {
 	static func `do`(level: ErrorLevel = .testing, message: String? = nil, _ block: () throws -> Void) {
@@ -44,5 +45,24 @@ public extension Achtung {
 		print("⚠️ \(message ?? "Achtung"): \(error)")
 	}
 }
-
+#else
+public extension Achtung {
+	static func `do`(level: ErrorLevel = .testing, message: String? = nil, _ block: () throws -> Void) {
+		do {
+			try block()
+		} catch {
+			print("\(message ?? ""): \(error)")
+		}
+	}
+	
+	static func `do`(level: ErrorLevel = .testing, message: String? = nil, _ block: @escaping () async throws -> Void) {
+		Task {
+			do {
+				try await block()
+			} catch {
+				print("\(message ?? ""): \(error)")
+			}
+		}
+	}
+}
 #endif

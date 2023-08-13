@@ -5,8 +5,6 @@
 //  Created by Ben Gottlieb on 9/8/21.
 //
 
-#if os(iOS)
-
 import SwiftUI
 
 
@@ -22,4 +20,3 @@ public extension View {
 	}
 }
 
-#endif

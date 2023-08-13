@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-#if os(iOS)
 
 @available(OSX 10.15, iOS 13.0, *)
 extension Achtung {
@@ -97,4 +96,3 @@ extension Achtung {
 		  
 	 }
 }
-#endif
