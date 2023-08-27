@@ -42,12 +42,22 @@ public extension Achtung {
 		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leading: AnyView?, tapAction: (() -> Void)? = nil) {
 			self.title = title
 			self.duration = duration ?? Achtung.onScreenTime
-			self.body = error?.localizedDescription ?? body
+			self.body = error?.achtungDescription ?? body
 			self.error = error
 			self.leading = leading
 			self.tapAction = tapAction
 		}
 		
 		static let sample = Achtung.Toast(title: "Look at me!")
+	}
+}
+
+extension Error {
+	var achtungDescription: String {
+		let localized = localizedDescription
+		if !localized.contains("error 0.)") { return localized }
+		
+		let debug = (self as CustomDebugStringConvertible).debugDescription
+		return debug.components(separatedBy: ".").joined(separator: ", ")
 	}
 }

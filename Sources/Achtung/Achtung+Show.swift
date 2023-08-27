@@ -34,7 +34,7 @@ extension Achtung {
 	}
 
     public func show(title: String, error: Error, buttons: [Achtung.Button]? = nil) {
-        show(title: Text(title), message: Text(error.localizedDescription), buttons: buttons ?? [.ok()])
+        show(title: Text(title), message: Text(error.achtungDescription), buttons: buttons ?? [.ok()])
     }
 
     
