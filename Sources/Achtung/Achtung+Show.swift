@@ -15,14 +15,21 @@ extension Achtung {
 	
 	public func show(toast: Toast) {
 		if isSettingUp {
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.show(toast: toast) }
+			Task {
+				try await Task.sleep(nanoseconds: 500_000_000)
+				await MainActor.run {
+					show(toast: toast)
+				}
+			}
 			return
 		}
 		if !isSetup() { return }
 
-		DispatchQueue.main.async {
-			self.toasts.append(toast)
-			if self.nextToastTimer == nil { self.showNextToast() }
+		Task {
+			await MainActor.run {
+				toasts.append(toast)
+				if nextToastTimer == nil { showNextToast() }
+			}
 		}
 	}
 
@@ -36,13 +43,15 @@ extension Achtung {
 		if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
 
 		let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, buttons: buttons)
-		DispatchQueue.main.async {
-			if self.pendingAlerts.isEmpty {
-				withAnimation() {
-					self.pendingAlerts.append(alert)
+		Task {
+			await MainActor.run {
+				if pendingAlerts.isEmpty {
+					withAnimation() {
+						pendingAlerts.append(alert)
+					}
+				} else {
+					pendingAlerts.append(alert)
 				}
-			} else {
-				self.pendingAlerts.append(alert)
 			}
 		}
 	}

@@ -40,9 +40,12 @@ public class Achtung: ObservableObject {
 				self.add(toScene: scene)
 			} else {
 				isSettingUp = true
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-					self.add(toScene: nil)
-					self.isSettingUp = false
+				Task {
+					try await Task.sleep(nanoseconds: 500_000_000)
+					await MainActor.run {
+						self.add(toScene: nil)
+						self.isSettingUp = false
+					}
 				}
 			}
 		}
@@ -53,8 +56,11 @@ public class Achtung: ObservableObject {
 			withAnimation(.easeOut(duration: Achtung.showDuration)) {
 				currentToast = next
 			}
-			DispatchQueue.main.asyncAfter(deadline: .now() + next.duration) {
-				self.dismissCurrentToast()
+			Task {
+				try await Task.sleep(nanoseconds: UInt64(500_000_000 * next.duration))
+				await MainActor.run {
+					self.dismissCurrentToast()
+				}
 			}
 			toasts.removeFirst()
 		}
