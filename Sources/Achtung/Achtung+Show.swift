@@ -14,6 +14,10 @@ import Combine
 extension Achtung {
 	
 	public func show(toast: Toast) {
+		if isSettingUp {
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.show(toast: toast) }
+			return
+		}
 		if !isSetup() { return }
 
 		DispatchQueue.main.async {

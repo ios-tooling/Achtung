@@ -17,6 +17,7 @@ public class Achtung: ObservableObject {
 		var hostWindow: UIWindow?
 	#endif
 	var toasts: [Toast] = []
+	var isSettingUp = false
 	weak var nextToastTimer: Timer?
 	public var errorDisplayLevel = ErrorLevel.standard
 	
@@ -28,13 +29,20 @@ public class Achtung: ObservableObject {
 		
 	}
 	
-	#if os(iOS)
-		public func setup(in scene: UIWindowScene? = nil) {
+	#if os(macOS)
+		public func setup(level: ErrorLevel = .standard) {
+			errorDisplayLevel = level
+		}
+	#else
+		public func setup(in scene: UIWindowScene? = nil, level: ErrorLevel? = nil) {
+			if let level { errorDisplayLevel = level }
 			if let scene = scene {
 				self.add(toScene: scene)
 			} else {
+				isSettingUp = true
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					self.add(toScene: nil)
+					self.isSettingUp = false
 				}
 			}
 		}
