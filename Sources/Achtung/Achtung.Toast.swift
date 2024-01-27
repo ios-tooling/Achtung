@@ -8,7 +8,8 @@
 import SwiftUI
 
 public extension Achtung {
-	static let onScreenTime: TimeInterval = 4
+	static let onScreenTime: TimeInterval = 8
+	static let longOnScreenTime: TimeInterval = 12
 	static let showDuration: TimeInterval = 0.5
 	static let hideDuration: TimeInterval = 0.4
 
@@ -41,7 +42,7 @@ public extension Achtung {
 		
 		public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, leading: AnyView?, tapAction: (() -> Void)? = nil) {
 			self.title = title
-			self.duration = duration ?? Achtung.onScreenTime
+			self.duration = duration ?? (body == nil ? Achtung.onScreenTime : Achtung.longOnScreenTime)
 			self.body = error?.achtungDescription ?? body
 			self.error = error
 			self.leading = leading

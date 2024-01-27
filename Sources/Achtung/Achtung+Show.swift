@@ -33,11 +33,15 @@ extension Achtung {
 		}
 	}
 
-    public func show(title: String, error: Error, buttons: [Achtung.Button]? = nil) {
-        show(title: Text(title), message: Text(error.achtungDescription), buttons: buttons ?? [.ok()])
-    }
+	public func show(title: String, error: Error, buttons: [Achtung.Button]? = nil) {
+		 show(title: Text(title), message: Text(error.achtungDescription), buttons: buttons ?? [.ok()])
+	}
 
-    
+	public func show(title: String, message: String? = nil, buttons: [Achtung.Button]? = nil) {
+		show(title: Text(title), message: message == nil ? nil : Text(message!), buttons: buttons ?? [.ok()])
+	}
+
+
 	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
 		if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
