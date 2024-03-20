@@ -10,7 +10,7 @@ import SwiftUI
 
 @available(OSX 10.15, iOS 13.0, *)
 public extension View {
-	func achtung<Item: Identifiable>(item target: Binding<Item?>, content: (Item) -> Achtung.Alert?) -> some View {
+	@MainActor func achtung<Item: Identifiable>(item target: Binding<Item?>, content: (Item) -> Achtung.Alert?) -> some View {
 		let achtung = Achtung.instance
 		if let item = target.wrappedValue, let alert = content(item) {
 			achtung.show(title: alert.title, message: alert.message, tag: alert.tag, buttons: alert.buttons)

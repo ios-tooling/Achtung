@@ -14,9 +14,14 @@ import UIKit
 
 @available(OSX 10.15, iOS 13.0, *)
 public extension Achtung {
+	static var isInPreview: Bool { ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" }
+
+	
 	func isSetup() -> Bool {
 		if hostWindow == nil {
-			print("#### Achtung was not successfully set up. Please call Achtung.instance.setup(scene:) at init time ###")
+			if !Self.isInPreview {
+				print("#### Achtung was not successfully set up. Please call Achtung.instance.setup(scene:) at init time ###")
+			}
 			return false
 		}
 		return true
@@ -25,7 +30,9 @@ public extension Achtung {
 	func add(toScene: UIWindowScene?) {
 		if hostWindow != nil { return }				 // already added
 		guard let scene = toScene ?? firstWindowScene else {
-			print("#### Unable to find a window scene, no Achtung for you! ####")
+			if !Self.isInPreview {
+				print("#### Unable to find a window scene, no Achtung for you! ####")
+			}
 			return
 		}
 		

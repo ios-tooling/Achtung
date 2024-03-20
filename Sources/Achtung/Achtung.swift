@@ -11,7 +11,7 @@ import SwiftUI
 import Combine
 
 @available(OSX 10.15, iOS 13.0, *)
-public class Achtung: ObservableObject {
+@MainActor public class Achtung: ObservableObject {
 	public static let instance = Achtung()
 	#if os(iOS)
 		var hostWindow: UIWindow?
@@ -72,7 +72,7 @@ public class Achtung: ObservableObject {
 				currentToast = nil
 			}
 			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideDuration, repeats: false) { _ in
-				self.showNextToast()
+				Task { @MainActor in self.showNextToast() }
 			}
 		}
 	}

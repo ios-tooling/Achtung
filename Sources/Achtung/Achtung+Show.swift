@@ -101,7 +101,7 @@ extension Achtung {
 
 @available(OSX 10.15, iOS 13.0, *)
 extension View {
-	public func achtung(title: Text? = nil, message: Text? = nil, tag: String? = nil, buttons: [Achtung.Button]) {
+	@MainActor public func achtung(title: Text? = nil, message: Text? = nil, tag: String? = nil, buttons: [Achtung.Button]) {
 		Achtung.instance.show(title: title, message: message, tag: tag, buttons: buttons)
 	}
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 @available(OSX 10.15, iOS 13.0, *)
 extension Achtung {
-	struct AlertView: View {
+	@MainActor struct AlertView: View {
 		let alert: Achtung.Alert
 		let foreground: Color = .white
 		let borderColor: Color = .white

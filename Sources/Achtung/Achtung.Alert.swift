@@ -20,7 +20,7 @@ extension Achtung {
 		let fieldText: Binding<String>?
 		let fieldPlaceholder: String
 		
-		func buttonPressed() {
+		@MainActor func buttonPressed() {
 			Achtung.instance.remove(self)
 		}
 		
