@@ -30,7 +30,11 @@ import Combine
 	@Published public var alertBackgroundColor = Color.black
 	@Published public var alertForegroundColor = Color.white
 	@Published public var alertBorderColor = Color.white.opacity(0.9)
-	
+
+	@Published public var toastBackgroundColor = Color.black
+	@Published public var toastForegroundColor = Color.white
+	@Published public var toastBorderColor = Color.white.opacity(0.9)
+
 	public var filterError: (Error) -> ErrorFilterResult = { _ in .display }
 
 	public func handle(_ error: Error, level: ErrorLevel? = nil, message: String? = nil) {

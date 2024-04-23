@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension Achtung {
-	struct ToastView: View {
+	@MainActor struct ToastView: View {
 		let toast: Achtung.Toast
 		var body: some View {
 			ZStack(alignment: .top) {
@@ -29,7 +29,7 @@ extension Achtung {
 				}
 				.font(toast.titleFont)
 				.padding()
-				.foregroundColor(toast.textColor)
+				.foregroundColor(toast.foregroundColor ?? Achtung.instance.toastForegroundColor)
 				.background(backgroundView)
 				.multilineTextAlignment(.center)
 				.padding(4)
@@ -46,9 +46,9 @@ extension Achtung {
 		var backgroundView: some View {
 			ZStack() {
 				RoundedRectangle(cornerRadius: toast.cornerRadius)
-					.fill(toast.backgroundColor)
+					.fill(toast.backgroundColor ?? Achtung.instance.toastBackgroundColor)
 				RoundedRectangle(cornerRadius: toast.cornerRadius)
-					.stroke(toast.borderColor, lineWidth: toast.borderWidth)
+					.stroke(toast.borderColor ?? Achtung.instance.toastBorderColor, lineWidth: toast.borderWidth)
 			}
 		}
 	}
