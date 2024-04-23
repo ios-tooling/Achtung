@@ -24,10 +24,20 @@ import Combine
 	
 	@Published var currentToast: Toast?
 	@Published var pendingAlerts: [Achtung.Alert] = []
+	
+	@Published public var alertBackgroundColor = Color.black
+	@Published public var alertForegroundColor = Color.white
+	@Published public var alertBorderColor = Color.white.opacity(0.9)
 
-	private init() {
+	public var filterError: (Error) -> Bool = { _ in false }
+
+	public func handle(_ error: Error, level: ErrorLevel? = nil, message: String? = nil) {
+		if filterError(error) { return }
 		
+		show(error, level: level ?? .testing, message: message)
 	}
+	
+	private init() { }
 	
 	#if os(macOS)
 		public func setup(level: ErrorLevel = .standard) {

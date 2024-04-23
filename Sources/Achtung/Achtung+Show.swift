@@ -33,20 +33,20 @@ extension Achtung {
 		}
 	}
 
-	public func show(title: String, error: Error, buttons: [Achtung.Button]? = nil) {
-		 show(title: Text(title), message: Text(error.achtungDescription), buttons: buttons ?? [.ok()])
+	public func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]? = nil) {
+		 show(title: Text(title), message: Text(error.achtungDescription), foreground: foreground, border: border, background: background, buttons: buttons ?? [.ok()])
 	}
 
-	public func show(title: String, message: String? = nil, buttons: [Achtung.Button]? = nil) {
-		show(title: Text(title), message: message == nil ? nil : Text(message!), buttons: buttons ?? [.ok()])
+	public func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]? = nil) {
+		show(title: Text(title), message: message == nil ? nil : Text(message!), foreground: foreground, border: border, background: background, buttons: buttons ?? [.ok()])
 	}
 
 
-	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
+	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]) {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
 		if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
 
-		let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, buttons: buttons)
+		let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, buttons: buttons)
 		Task {
 			await MainActor.run {
 				if pendingAlerts.isEmpty {

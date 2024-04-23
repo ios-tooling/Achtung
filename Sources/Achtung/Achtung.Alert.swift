@@ -19,27 +19,36 @@ extension Achtung {
 		let buttons: [Achtung.Button]
 		let fieldText: Binding<String>?
 		let fieldPlaceholder: String
+		let foregroundColor: Color?
+		let backgroundColor: Color?
+		let borderColor: Color?
 		
 		@MainActor func buttonPressed() {
 			Achtung.instance.remove(self)
 		}
 		
-		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, buttons: [Achtung.Button]) {
+		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]) {
 			self.title = title
 			self.message = message
 			self.tag = tag
 			self.buttons = buttons
 			self.fieldText = fieldText
 			self.fieldPlaceholder = fieldPlaceholder
+			self.foregroundColor = foreground
+			self.backgroundColor = background
+			self.borderColor = border
 		}
 		
-		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
+		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
 			self.title = title
 			self.message = message
 			self.tag = tag
 			self.buttons = [primaryButton, secondaryButton, dismissButton].compactMap { $0 }
 			self.fieldText = fieldText
 			self.fieldPlaceholder = fieldPlaceholder
+			self.foregroundColor = foreground
+			self.backgroundColor = background
+			self.borderColor = border
 		}
 		
 		public static func ==(lhs: Achtung.Alert, rhs: Achtung.Alert) -> Bool { lhs.id == rhs.id }
