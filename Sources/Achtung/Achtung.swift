@@ -13,9 +13,9 @@ import Combine
 @available(OSX 10.15, iOS 13.0, *)
 @MainActor public class Achtung: ObservableObject {
 	public static let instance = Achtung()
-	#if os(iOS)
-		var hostWindow: UIWindow?
-	#endif
+#if os(iOS)
+	var hostWindow: UIWindow?
+#endif
 	var toasts: [Toast] = []
 	var isSettingUp = false
 	weak var nextToastTimer: Timer?
@@ -24,17 +24,31 @@ import Combine
 	
 	@Published var currentToast: Toast?
 	@Published var pendingAlerts: [Achtung.Alert] = []
+	@Published public internal(set) var recordedErrors: [RecordedError] = []
+	public var recordedErrorLimit = 10
 	
 	@Published public var alertBackgroundColor = Color.black
 	@Published public var alertForegroundColor = Color.white
 	@Published public var alertBorderColor = Color.white.opacity(0.9)
-
-	public var filterError: (Error) -> Bool = { _ in false }
+	
+	public var filterError: (Error) -> ErrorFilterResult = { _ in .display }
 
 	public func handle(_ error: Error, level: ErrorLevel? = nil, message: String? = nil) {
-		if filterError(error) { return }
+		var displayed = error
 		
-		show(error, level: level ?? .testing, message: message)
+		switch filterError(error) {
+		case .ignore: return
+		case .log:
+			recordError(error, message: message)
+			print(error)
+			return
+			
+		case .display: break
+		case .replace(let err): displayed = err
+		}
+		
+		recordError(error, message: message)
+		show(displayed, level: level ?? .testing, message: message)
 	}
 	
 	private init() { }
