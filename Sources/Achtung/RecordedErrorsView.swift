@@ -16,7 +16,7 @@ public struct RecordedErrorsView: View {
 		if achtung.recordedErrors.isEmpty {
 			VStack {
 				Spacer()
-				if #available(iOS 17.0, *) {
+				if #available(iOS 17.0, macOS 14.0, *) {
 					ContentUnavailableView(label: {
 						Label("No Reported Errors", systemImage: "exclamationmark.triangle")
 					}, description: {
