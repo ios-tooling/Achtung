@@ -5,7 +5,7 @@
 //  Created by Ben Gottlieb on 5/31/23.
 //
 
-import Foundation
+import SwiftUI
 
 public extension Achtung {
 	enum ErrorLevel: Int, Comparable { case debug, testing, standard
@@ -40,6 +40,16 @@ public extension Achtung {
 		
 		if level >= errorDisplayLevel {
 			let toast = Toast(title: message ?? "An error occurred", body: nil, error: error)
+			show(toast: toast)
+		}
+		print("⚠️ \(message ?? "Achtung"): \(error)")
+	}
+	
+	func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, message: String? = nil, @ViewBuilder accessory: () -> Accessory) {
+		guard let error else { return }
+		
+		if level >= errorDisplayLevel {
+			let toast = Toast(title: message ?? "An error occurred", body: nil, error: error, accessory: accessory)
 			show(toast: toast)
 		}
 		print("⚠️ \(message ?? "Achtung"): \(error)")

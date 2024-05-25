@@ -18,13 +18,18 @@ extension Achtung {
 					}
 					VStack(alignment: .leading) {
 						Text(toast.title)
-						if let body = toast.body {
-							Text(body)
-								.multilineTextAlignment(.leading)
-								.lineLimit(3)
-								.font(toast.bodyFont)
-								.opacity(0.8)
+						VStack(alignment: .leading) {
+							if let body = toast.body {
+								Text(body)
+							}
+							if let accessoryView = toast.accessoryView {
+								accessoryView
+							}
 						}
+						.multilineTextAlignment(.leading)
+						.lineLimit(3)
+						.font(toast.bodyFont)
+						.opacity(0.8)
 					}
 				}
 				.font(toast.titleFont)

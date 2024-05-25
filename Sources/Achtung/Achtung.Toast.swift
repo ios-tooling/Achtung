@@ -30,17 +30,22 @@ public extension Achtung {
 		public var titleFont = Font.system(size: 18, weight: .semibold)
 		public var bodyFont = Font.system(size: 16, weight: .regular)
 		public var tapAction: (() -> Void)?
+		public var accessoryView: AnyView?
 		
 		
-		@MainActor public init<Leading: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, leadingView: () -> Leading, tapAction: (() -> Void)? = nil) {
-			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: AnyView(leadingView()), tapAction: tapAction)
+		@MainActor public init<Leading: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, @ViewBuilder leadingView: () -> Leading, tapAction: (() -> Void)? = nil) {
+			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: AnyView(leadingView()), accessory: nil, tapAction: tapAction)
+		}
+		
+		@MainActor public init<Accessory: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, @ViewBuilder accessory: () -> Accessory, tapAction: (() -> Void)? = nil) {
+			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: nil, accessory: AnyView(accessory()), tapAction: tapAction)
 		}
 		
 		@MainActor public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapAction: (() -> Void)? = nil) {
-			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: nil, tapAction: tapAction)
+			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: nil, accessory: nil, tapAction: tapAction)
 		}
 		
-		@MainActor public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, leading: AnyView?, tapAction: (() -> Void)? = nil) {
+		@MainActor public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, leading: AnyView?, accessory: AnyView?, tapAction: (() -> Void)? = nil) {
 			self.title = title
 			self.duration = duration ?? (body == nil ? Achtung.onScreenTime : Achtung.longOnScreenTime)
 			self.body = error?.achtungDescription ?? body
@@ -50,6 +55,7 @@ public extension Achtung {
 			self.foregroundColor = foreground
 			self.borderColor = border
 			self.backgroundColor = background
+			self.accessoryView = accessory
 		}
 		
 		@MainActor static let sample = Achtung.Toast(title: "Look at me!")
