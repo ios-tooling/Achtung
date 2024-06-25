@@ -7,13 +7,15 @@
 
 import SwiftUI
 
+extension AnyView: @unchecked Sendable { }
+
 public extension Achtung {
 	static let onScreenTime: TimeInterval = 8
 	static let longOnScreenTime: TimeInterval = 12
 	static let showDuration: TimeInterval = 0.5
 	static let hideDuration: TimeInterval = 0.4
 
-	struct Toast {
+	struct Toast: Sendable {
 
 		public var title: String
 		public var body: String?
@@ -29,23 +31,23 @@ public extension Achtung {
 		public var cornerRadius: CGFloat = 8
 		public var titleFont = Font.system(size: 18, weight: .semibold)
 		public var bodyFont = Font.system(size: 16, weight: .regular)
-		public var tapAction: (() -> Void)?
+		public var tapAction: (@Sendable () -> Void)?
 		public var accessoryView: AnyView?
 		
 		
-		@MainActor public init<Leading: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, @ViewBuilder leadingView: () -> Leading, tapAction: (() -> Void)? = nil) {
+		@MainActor public init<Leading: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, @ViewBuilder leadingView: () -> Leading, tapAction: (@Sendable () -> Void)? = nil) {
 			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: AnyView(leadingView()), accessory: nil, tapAction: tapAction)
 		}
 		
-		@MainActor public init<Accessory: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, @ViewBuilder accessory: () -> Accessory, tapAction: (() -> Void)? = nil) {
+		@MainActor public init<Accessory: View>(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, @ViewBuilder accessory: () -> Accessory, tapAction: (@Sendable () -> Void)? = nil) {
 			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: nil, accessory: AnyView(accessory()), tapAction: tapAction)
 		}
 		
-		@MainActor public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapAction: (() -> Void)? = nil) {
+		@MainActor public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapAction: (@Sendable () -> Void)? = nil) {
 			self.init(title: title, body: body, error: error, duration: duration, foreground: foreground, border: border, background: background, leading: nil, accessory: nil, tapAction: tapAction)
 		}
 		
-		@MainActor public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, leading: AnyView?, accessory: AnyView?, tapAction: (() -> Void)? = nil) {
+		@MainActor public init(title: String, body: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, leading: AnyView?, accessory: AnyView?, tapAction: (@Sendable () -> Void)? = nil) {
 			self.title = title
 			self.duration = duration ?? (body == nil ? Achtung.onScreenTime : Achtung.longOnScreenTime)
 			self.body = error?.achtungDescription ?? body
