@@ -69,30 +69,30 @@ extension Achtung {
 	}
 
 	
-	public struct Button: Identifiable {
-		public enum Kind { case normal, cancel, destructive }
+	public struct Button: Identifiable, Sendable {
+		public enum Kind: Sendable { case normal, cancel, destructive }
 		public let id: String = UUID().uuidString
 		public let label: Text
 		public let kind: Kind
-		public let action: (() -> Void)?
+		public let action: (@Sendable () -> Void)?
 		
 		func pressed() {
 			self.action?()
 		}
 		
-		public static func `default`(_ label: Text, action: (() -> Void)? = {}) -> Button {
+		public static func `default`(_ label: Text, action: (@Sendable () -> Void)? = {}) -> Button {
 			Button(label: label, kind: .normal, action: action)
 		}
 		
-        public static func ok(_ label: Text = Text("OK"), action: (() -> Void)? = {}) -> Button {
+        public static func ok(_ label: Text = Text("OK"), action: (@Sendable () -> Void)? = {}) -> Button {
             Button(label: label, kind: .normal, action: action)
         }
         
-        public static func cancel(_ label: Text = Text("Cancel"), action: (() -> Void)? = {}) -> Button {
+        public static func cancel(_ label: Text = Text("Cancel"), action: (@Sendable () -> Void)? = {}) -> Button {
             Button(label: label, kind: .cancel, action: action)
         }
         
-		public static func destructive(_ label: Text, _ action: (() -> Void)? = {}) -> Button {
+		public static func destructive(_ label: Text, _ action: (@Sendable () -> Void)? = {}) -> Button {
 			Button(label: label, kind: .destructive, action: action)
 		}
 		

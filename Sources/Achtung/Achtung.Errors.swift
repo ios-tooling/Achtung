@@ -8,7 +8,7 @@
 import SwiftUI
 
 public extension Achtung {
-	enum ErrorLevel: Int, Comparable { case debug, testing, standard
+	enum ErrorLevel: Int, Comparable, Sendable { case debug, testing, standard
 		public static func <(lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
 	}
 }

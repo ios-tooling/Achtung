@@ -11,7 +11,7 @@ import Combine
 
 @available(OSX 10.15, iOS 13.0, *)
 extension Achtung {
-	public struct Alert: Identifiable, Equatable {
+	public struct Alert: Identifiable, Equatable, @unchecked Sendable {
 		public let id = UUID()
 		var tag: String?
 		var title: Text?
