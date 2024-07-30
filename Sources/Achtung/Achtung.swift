@@ -43,7 +43,7 @@ import Combine
 		switch filterError(error) {
 		case .ignore: return
 		case .log:
-			recordError(error, message: message)
+            Self.recordError(error, message: message)
 			print(error)
 			return
 			
@@ -51,7 +51,7 @@ import Combine
 		case .replace(let err): displayed = err
 		}
 		
-		recordError(error, message: message)
+        Self.recordError(error, message: message)
 		show(displayed, level: level ?? .testing, message: message)
 	}
 	

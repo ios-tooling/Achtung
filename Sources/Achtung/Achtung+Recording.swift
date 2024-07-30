@@ -14,8 +14,15 @@ public extension Achtung {
 		public let error: Error
 		public let message: String?
 	}
+    
+    nonisolated static func recordError(_ error: Error, message: String?) {
+        Task { @MainActor in
+            Achtung.instance._recordError(error, message: message)
+        }
+    }
 	
-	func recordError(_ error: Error, message: String?) {
+	func _recordError(_ error: Error, message: String?) {
+        print("⛔️\(message ?? ""): \(error.localizedDescription)")
 		recordedErrors.append(.init(error: error, message: message))
 		while recordedErrors.count > recordedErrorLimit {
 			recordedErrors.removeFirst()
