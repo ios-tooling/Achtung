@@ -14,7 +14,7 @@ import Combine
 @MainActor public class Achtung: ObservableObject {
 	public static let instance = Achtung()
 #if os(iOS)
-	var hostWindow: UIWindow?
+	var hostWindow: HostWindow?
 #endif
 	var toasts: [Toast] = []
 	var isSettingUp = false
@@ -44,7 +44,7 @@ import Combine
 		case .ignore: return
 		case .log:
             Self.recordError(error, message: message)
-			print(error)
+			print("Achtung recorded: \(error)")
 			return
 			
 		case .display: break
@@ -81,7 +81,7 @@ import Combine
 	
 	func showNextToast() {
 		if currentToast == nil, let next = toasts.first {
-			withAnimation(.easeOut(duration: Achtung.showDuration)) {
+			withAnimation(.easeOut(duration: Achtung.showToastDuration)) {
 				currentToast = next
 			}
 			Task {
@@ -96,10 +96,10 @@ import Combine
 	
 	func dismissCurrentToast() {
 		if currentToast != nil {
-			withAnimation(.easeIn(duration: Achtung.hideDuration)) {
+			withAnimation(.easeIn(duration: Achtung.hideToastDuration)) {
 				currentToast = nil
 			}
-			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideDuration, repeats: false) { _ in
+			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideToastDuration, repeats: false) { _ in
 				Task { @MainActor in self.showNextToast() }
 			}
 		}

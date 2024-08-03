@@ -1,6 +1,6 @@
 //
 //  Achtung.Container.swift
-//  
+//
 //
 //  Created by ben on 8/13/20.
 //
@@ -14,7 +14,7 @@ import Combine
 extension Achtung {
 	struct Container: View {
 		@ObservedObject var achtung = Achtung.instance
-
+		
 		@ViewBuilder var alerts: some View {
 			let count = achtung.pendingAlerts.count - 1
 			ForEach(achtung.pendingAlerts.indices, id: \.self) { index in
@@ -29,15 +29,21 @@ extension Achtung {
 					Rectangle()
 						.fill(Color.black.opacity(0.5))
 						.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+						.allowsHitTesting(true)
 						.transition(.opacity)
-
+						.onTapGesture {
+							if Achtung.instance.pendingAlerts.first?.tapOutsideToDismiss == true {
+								Achtung.instance.remove(nil)
+							}
+						}
+					
 					alerts
 				}
-
-				if let toast = achtung.currentToast {
-					ToastView(toast: toast)
-						.zIndex(100)
-				}
+				
+//				if let toast = achtung.currentToast {
+//					ToastView(toast: toast)
+//						.zIndex(100)
+//				}
 			}
 		}
 	}

@@ -12,8 +12,10 @@ extension AnyView: @unchecked Sendable { }
 public extension Achtung {
 	static let onScreenTime: TimeInterval = 8
 	static let longOnScreenTime: TimeInterval = 12
-	static let showDuration: TimeInterval = 0.5
-	static let hideDuration: TimeInterval = 0.4
+	static let showToastDuration: TimeInterval = 0.5
+	static let hideToastDuration: TimeInterval = 0.4
+	static let showAlertDuration: TimeInterval = 0.2
+	static let hideAlertDuration: TimeInterval = 0.2
 
 	struct Toast: Sendable {
 

@@ -33,37 +33,40 @@ extension Achtung {
 		}
 	}
 
-	public func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]? = nil) {
-		 show(title: Text(title), message: Text(error.achtungDescription), foreground: foreground, border: border, background: background, buttons: buttons ?? [.ok()])
+	public func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
+		show(title: Text(title), message: Text(error.achtungDescription), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
 	}
 
-	public func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]? = nil) {
-		show(title: Text(title), message: message == nil ? nil : Text(message!), foreground: foreground, border: border, background: background, buttons: buttons ?? [.ok()])
+	public func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
+		show(title: Text(title), message: message == nil ? nil : Text(message!), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
 	}
 
 
-	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]) {
+	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
 		if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
 
-		let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, buttons: buttons)
+		let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
 		Task {
 			await MainActor.run {
 				if pendingAlerts.isEmpty {
-					withAnimation() {
+					withAnimation(.linear(duration: Achtung.showAlertDuration)) {
 						pendingAlerts.append(alert)
 					}
 				} else {
 					pendingAlerts.append(alert)
 				}
+				hostWindow?.isEnabled = !pendingAlerts.isEmpty
 			}
 		}
 	}
 	
-	func remove(_ pending: Achtung.Alert) {
+	func remove(_ pending: Achtung.Alert?) {
+		guard let pending = pending ?? pendingAlerts.first else { return }
 		if let index = self.pendingAlerts.firstIndex(of: pending) {
-			_ = withAnimation() {
+			withAnimation(.linear(duration: Achtung.hideAlertDuration)) {
 				self.pendingAlerts.remove(at: index)
+				hostWindow?.isEnabled = !pendingAlerts.isEmpty
 			}
 		}
 	}

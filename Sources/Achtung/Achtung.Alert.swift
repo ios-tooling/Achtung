@@ -22,12 +22,13 @@ extension Achtung {
 		let foregroundColor: Color?
 		let backgroundColor: Color?
 		let borderColor: Color?
+		let tapOutsideToDismiss: Bool
 		
 		@MainActor func buttonPressed() {
 			Achtung.instance.remove(self)
 		}
 		
-		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, buttons: [Achtung.Button]) {
+		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
 			self.title = title
 			self.message = message
 			self.tag = tag
@@ -37,9 +38,10 @@ extension Achtung {
 			self.foregroundColor = foreground
 			self.backgroundColor = background
 			self.borderColor = border
+			self.tapOutsideToDismiss = tapOutsideToDismiss
 		}
 		
-		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
+		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
 			self.title = title
 			self.message = message
 			self.tag = tag
@@ -49,6 +51,7 @@ extension Achtung {
 			self.foregroundColor = foreground
 			self.backgroundColor = background
 			self.borderColor = border
+			self.tapOutsideToDismiss = tapOutsideToDismiss
 		}
 		
 		public static func ==(lhs: Achtung.Alert, rhs: Achtung.Alert) -> Bool { lhs.id == rhs.id }

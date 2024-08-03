@@ -67,6 +67,7 @@ extension Achtung {
 			}
 			.padding(20)
 			.transition(AnyTransition.scale)
+			.contentShape(.rect)
 		}
 		
 		func buttonViews(minWidth: CGFloat) -> some View {

@@ -41,6 +41,7 @@ public extension Achtung {
 		window.rootViewController = UIHostingController(rootView: Achtung.Container())
 		window.rootViewController?.view.backgroundColor = .clear
 		window.isHidden = false
+//		window.rootViewController?.view.isUserInteractionEnabled = true
 		self.hostWindow = window
 	}
 
@@ -49,8 +50,10 @@ public extension Achtung {
 	}
 
 	class HostWindow: UIWindow {
+		var isEnabled = false
 		public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 			guard let hitView = super.hitTest(point, with: event) else { return nil }
+			if isEnabled { return hitView }
 			return rootViewController?.view == hitView ? nil : hitView
 		}
 	}
