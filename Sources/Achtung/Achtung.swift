@@ -96,6 +96,7 @@ import Combine
 	
 	func dismissCurrentToast() {
 		if currentToast != nil {
+			Achtung.instance.hostWindow?.activeToastHeight = 0
 			withAnimation(.easeIn(duration: Achtung.hideToastDuration)) {
 				currentToast = nil
 			}

@@ -16,7 +16,7 @@ extension Achtung {
 	public func show(toast: Toast) {
 		if isSettingUp {
 			Task {
-				try await Task.sleep(nanoseconds: 500_000_000)
+				try? await Task.sleep(nanoseconds: 500_000_000)
 				await MainActor.run {
 					show(toast: toast)
 				}

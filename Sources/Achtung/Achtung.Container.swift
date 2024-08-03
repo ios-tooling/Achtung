@@ -40,10 +40,10 @@ extension Achtung {
 					alerts
 				}
 				
-//				if let toast = achtung.currentToast {
-//					ToastView(toast: toast)
-//						.zIndex(100)
-//				}
+				if let toast = achtung.currentToast {
+					ToastView(toast: toast)
+						.zIndex(100)
+				}
 			}
 		}
 	}
