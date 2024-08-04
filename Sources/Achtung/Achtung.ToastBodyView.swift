@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ToastBodyView: View {
+@MainActor struct ToastBodyView: View {
 	let toast: Achtung.Toast
 	
 	var body: some View {
