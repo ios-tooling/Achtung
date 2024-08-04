@@ -42,7 +42,7 @@ import SwiftUI
 				GeometryReader { geometry in
 					Color.clear
 						.onAppear {
-							Achtung.instance.hostWindow?.activeToastHeight = geometry.size.height
+							Achtung.instance.hostWindow?.activeToastFrame = geometry.frame(in: .global)
 						}
 				}
 			)
