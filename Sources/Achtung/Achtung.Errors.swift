@@ -22,7 +22,7 @@ public extension Achtung {
 			try block()
 		} catch {
 			Task {
-				await instance.show(error, level: level, title: title)
+				show(error, level: level, title: title)
 			}
 		}
 	}
@@ -32,31 +32,31 @@ public extension Achtung {
 			do {
 				try await block()
 			} catch {
-				await instance.show(error, level: level, title: title)
+				show(error, level: level, title: title)
 			}
 		}
 	}
 	
-	nonisolated func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil) {
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil) {
 		Task {
 			await show(error, level: level, leading: { EmptyView() }, accessory: { EmptyView() })
 		}
 	}
 	
-	func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, @ViewBuilder accessory: @escaping () -> Accessory) {
+	static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, @ViewBuilder accessory: @escaping () -> Accessory) {
 		show(error, level: level, leading: { EmptyView() }, accessory: accessory)
 	}
 	
-	func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, @ViewBuilder leading: @escaping () -> Leading) {
+	static func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, @ViewBuilder leading: @escaping () -> Leading) {
 		show(error, level: level, leading: leading, accessory: { EmptyView() })
 	}
 
-	func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) {
+	static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, localized: LocalizedStringKey? = nil, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) {
 		guard let error else { return }
 		
-		if level >= errorDisplayLevel {
-			let toast = Toast(title ?? "An error occurred", message: nil, error: error, leading: leading, accessory: accessory)
-			show(toast: toast)
+		if level >= Achtung.instance.errorDisplayLevel {
+			let toast = Toast(title ?? "An error occurred", localized: localized, message: nil, error: error, leading: leading, accessory: accessory)
+			Achtung.instance.show(toast: toast)
 		}
 		print("⚠️ \(title ?? "Achtung"): \(error)")
 	}

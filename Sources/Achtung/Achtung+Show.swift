@@ -12,6 +12,11 @@ import Combine
 
 @available(OSX 10.15, iOS 13.0, *)
 extension Achtung {
+	nonisolated static public func show(toast: Toast) {
+		Task { @MainActor in
+			Achtung.instance.show(toast: toast)
+		}
+	}
 	
 	nonisolated public func show(toast: Toast) {
 		Task { @MainActor in
@@ -24,30 +29,33 @@ extension Achtung {
 		}
 	}
 
-	public func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
+	public static func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
 		show(title: Text(title), message: Text(error.achtungDescription), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
 	}
 
-	public func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
+	public static func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
 		show(title: Text(title), message: message == nil ? nil : Text(message!), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
 	}
 
 
-	public func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
+	public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
-		if let tag = tag, pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
-
-		let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
-		Task {
-			await MainActor.run {
-				if pendingAlerts.isEmpty {
-					withAnimation(.linear(duration: Achtung.showAlertDuration)) {
-						pendingAlerts.append(alert)
+		
+		Task { @MainActor in
+			if let tag = tag, instance.pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
+			
+			let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
+			Task {
+				await MainActor.run {
+					if instance.pendingAlerts.isEmpty {
+						withAnimation(.linear(duration: Achtung.showAlertDuration)) {
+							instance.pendingAlerts.append(alert)
+						}
+					} else {
+						instance.pendingAlerts.append(alert)
 					}
-				} else {
-					pendingAlerts.append(alert)
+					instance.hostWindow?.isEnabled = !instance.pendingAlerts.isEmpty
 				}
-				hostWindow?.isEnabled = !pendingAlerts.isEmpty
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 //
 //  AchtungView.swift
-//  
+//
 //
 //  Created by ben on 8/13/20.
 //
@@ -30,20 +30,20 @@ import Combine
 	@Published public var alertBackgroundColor = Color.black
 	@Published public var alertForegroundColor = Color.white
 	@Published public var alertBorderColor = Color.white.opacity(0.9)
-
+	
 	@Published public var toastBackgroundColor = Color.black
 	@Published public var toastForegroundColor = Color.white
 	@Published public var toastBorderColor = Color.white.opacity(0.9)
-
+	
 	public var filterError: (Error) -> ErrorFilterResult = { _ in .display }
-
+	
 	public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) {
 		var displayed = error
 		
 		switch filterError(error) {
 		case .ignore: return
 		case .log:
-            Self.recordError(error, title: title)
+			Self.recordError(error, title: title)
 			print("Achtung recorded: \(error)")
 			return
 			
@@ -51,8 +51,8 @@ import Combine
 		case .replace(let err): displayed = err
 		}
 		
-        Self.recordError(error, title: title)
-		show(displayed, level: level ?? .testing, title: title)
+		Self.recordError(error, title: title)
+		Self.show(displayed, level: level ?? .testing, title: title)
 	}
 	
 	private init() { }
@@ -105,7 +105,7 @@ import Combine
 			}
 		}
 	}
-
+	
 }
 
 //@available(OSX 10.15, iOS 13.0, *)
