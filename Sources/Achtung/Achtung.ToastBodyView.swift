@@ -13,24 +13,26 @@ import SwiftUI
 	var body: some View {
 		ZStack(alignment: .top) {
 			HStack() {
-				if let leading = toast.leading {
+				if let leading = toast.leading as? AnyView {
 					leading
 				}
-				VStack(alignment: .leading) {
-					Text(toast.title)
+				VStack() {
 					VStack(alignment: .leading) {
-						if let body = toast.body {
-							Text(body)
+						if let title = toast.title {
+							Text(title)
 						}
-						if let accessoryView = toast.accessoryView {
-							accessoryView
+						if let message = toast.message {
+							Text(message)
 						}
 					}
-					.multilineTextAlignment(.leading)
-					.lineLimit(3)
-					.font(toast.bodyFont)
-					.opacity(0.8)
+					if let accessoryView = toast.accessoryView as? AnyView {
+						accessoryView
+					}
 				}
+				.multilineTextAlignment(.leading)
+				.lineLimit(3)
+				.font(toast.messageFont)
+				.opacity(0.8)
 			}
 			.font(toast.titleFont)
 			.padding()

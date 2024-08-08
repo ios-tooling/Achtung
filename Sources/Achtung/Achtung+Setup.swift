@@ -17,7 +17,7 @@ public extension Achtung {
 	static var isInPreview: Bool { ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" }
 
 	
-	func isSetup() -> Bool {
+	var isSetup: Bool {
 		if hostWindow == nil {
 			if !Self.isInPreview {
 				print("#### Achtung was not successfully set up. Please call Achtung.instance.setup(scene:) at init time ###")

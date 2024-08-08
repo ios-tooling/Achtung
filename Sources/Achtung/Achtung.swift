@@ -37,13 +37,13 @@ import Combine
 
 	public var filterError: (Error) -> ErrorFilterResult = { _ in .display }
 
-	public func handle(_ error: Error, level: ErrorLevel? = nil, message: String? = nil) {
+	public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) {
 		var displayed = error
 		
 		switch filterError(error) {
 		case .ignore: return
 		case .log:
-            Self.recordError(error, message: message)
+            Self.recordError(error, title: title)
 			print("Achtung recorded: \(error)")
 			return
 			
@@ -51,8 +51,8 @@ import Combine
 		case .replace(let err): displayed = err
 		}
 		
-        Self.recordError(error, message: message)
-		show(displayed, level: level ?? .testing, message: message)
+        Self.recordError(error, title: title)
+		show(displayed, level: level ?? .testing, title: title)
 	}
 	
 	private init() { }

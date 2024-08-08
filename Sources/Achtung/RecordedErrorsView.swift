@@ -32,7 +32,7 @@ public struct RecordedErrorsView: View {
 				List {
 					ForEach(achtung.recordedErrors) { error in
 						VStack(alignment: .leading) {
-							if let message = error.message {
+							if let message = error.title {
 								Text(message)
 							}
 							

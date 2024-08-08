@@ -6,24 +6,25 @@
 //
 
 import Foundation
+import SwiftUI
 
 public extension Achtung {
 	enum ErrorFilterResult { case ignore, log, display, replace(Error) }
 	struct RecordedError: Identifiable {
 		public let id = UUID()
 		public let error: Error
-		public let message: String?
+		public let title: LocalizedStringKey?
 	}
-    
-    nonisolated static func recordError(_ error: Error, message: String?) {
-        Task { @MainActor in
-            Achtung.instance._recordError(error, message: message)
-        }
-    }
 	
-	func _recordError(_ error: Error, message: String?) {
-        print("⛔️\(message ?? ""): \(error.localizedDescription)")
-		recordedErrors.append(.init(error: error, message: message))
+	nonisolated static func recordError(_ error: Error, title: LocalizedStringKey?) {
+		Task { @MainActor in
+			Achtung.instance._recordError(error, title: title)
+		}
+	}
+	
+	func _recordError(_ error: Error, title: LocalizedStringKey?) {
+		print("⛔️\(title ?? ""): \(error.localizedDescription)")
+		recordedErrors.append(.init(error: error, title: title))
 		while recordedErrors.count > recordedErrorLimit {
 			recordedErrors.removeFirst()
 		}

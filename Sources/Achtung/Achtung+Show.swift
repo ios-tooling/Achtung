@@ -13,23 +13,14 @@ import Combine
 @available(OSX 10.15, iOS 13.0, *)
 extension Achtung {
 	
-	public func show(toast: Toast) {
-		if isSettingUp {
-			Task {
+	nonisolated public func show(toast: Toast) {
+		Task { @MainActor in
+			if isSettingUp {
 				try? await Task.sleep(nanoseconds: 500_000_000)
-				await MainActor.run {
-					show(toast: toast)
-				}
 			}
-			return
-		}
-		if !isSetup() { return }
-
-		Task {
-			await MainActor.run {
-				toasts.append(toast)
-				if nextToastTimer == nil { showNextToast() }
-			}
+			if !isSetup { return }
+			toasts.append(toast)
+			if nextToastTimer == nil { showNextToast() }
 		}
 	}
 
