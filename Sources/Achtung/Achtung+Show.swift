@@ -29,6 +29,29 @@ extension Achtung {
 		}
 	}
 
+	nonisolated static public func show(alert: Achtung.Alert) {
+		Task { @MainActor in
+			Achtung.instance.show(alert: alert)
+		}
+	}
+	
+	nonisolated public func show(alert: Achtung.Alert) {
+		Task { @MainActor in
+			if isSettingUp {
+				try? await Task.sleep(nanoseconds: 500_000_000)
+			}
+			if !isSetup { return }
+			if pendingAlerts.isEmpty {
+				withAnimation(.linear(duration: Achtung.showAlertDuration)) {
+					pendingAlerts.append(alert)
+				}
+			} else {
+				pendingAlerts.append(alert)
+			}
+			hostWindow?.isEnabled = !pendingAlerts.isEmpty
+		}
+	}
+
 	public static func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
 		show(title: Text(title), message: Text(error.achtungDescription), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
 	}
@@ -44,19 +67,8 @@ extension Achtung {
 		Task { @MainActor in
 			if let tag = tag, instance.pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
 			
-			let alert = Achtung.Alert(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
-			Task {
-				await MainActor.run {
-					if instance.pendingAlerts.isEmpty {
-						withAnimation(.linear(duration: Achtung.showAlertDuration)) {
-							instance.pendingAlerts.append(alert)
-						}
-					} else {
-						instance.pendingAlerts.append(alert)
-					}
-					instance.hostWindow?.isEnabled = !instance.pendingAlerts.isEmpty
-				}
-			}
+			let alert = Achtung.Alert(text: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
+			show(alert: alert)
 		}
 	}
 	

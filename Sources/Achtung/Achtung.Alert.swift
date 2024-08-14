@@ -28,8 +28,8 @@ extension Achtung {
 			Achtung.instance.remove(self)
 		}
 		
-		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
-			self.title = title
+		public init(_ title: String? = nil, text: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
+			self.title = Text(text, title)
 			self.message = message
 			self.tag = tag
 			self.buttons = buttons
@@ -41,8 +41,8 @@ extension Achtung {
 			self.tapOutsideToDismiss = tapOutsideToDismiss
 		}
 		
-		public init(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
-			self.title = title
+		public init(_ title: String? = nil, text: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
+			self.title = Text(text, title)
 			self.message = message
 			self.tag = tag
 			self.buttons = [primaryButton, secondaryButton, dismissButton].compactMap { $0 }
@@ -55,6 +55,18 @@ extension Achtung {
 		}
 		
 		public static func ==(lhs: Achtung.Alert, rhs: Achtung.Alert) -> Bool { lhs.id == rhs.id }
+	}
+}
+
+extension Text {
+	init?(_ text: Text?, _ string: String?) {
+		if let text {
+			self = text
+		} else if let string {
+			self.init(string)
+		} else {
+			return nil
+		}
 	}
 }
 
