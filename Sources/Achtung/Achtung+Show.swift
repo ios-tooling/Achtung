@@ -113,6 +113,28 @@ extension Achtung {
 	}
 }
 
+extension View {
+	@ViewBuilder func styled(for button: Achtung.Button) -> some View {
+		switch button.kind {
+		case .cancel:
+			self
+			
+		case .destructive:
+			self
+				.foregroundColor(.red)
+			
+		case .normal:
+			
+			if #available(iOS 16.0, *) {
+				self
+					.bold()
+			} else {
+				self
+			}
+		}
+	}
+}
+
 @available(OSX 10.15, iOS 13.0, *)
 extension View {
 	@MainActor public func achtung(title: Text? = nil, message: Text? = nil, tag: String? = nil, buttons: [Achtung.Button]) {

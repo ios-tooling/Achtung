@@ -90,6 +90,7 @@ extension Achtung {
 							.padding(.vertical, 5)
 							.frame(minWidth: minWidth, minHeight: 40)
 							.layoutPriority(1)
+							.styled(for: button)
 					}
 					.padding(3)
 				}
