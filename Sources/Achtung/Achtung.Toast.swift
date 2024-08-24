@@ -50,7 +50,7 @@ public extension Achtung {
 		}
 
 		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapAction: (@Sendable () -> Void)? = nil) {
-			self.init(title, localized: localized, error: error, duration: duration, foreground: foreground, border: border, background: background, leadingView: nil, accessoryView: nil, tapAction: tapAction)
+			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, leadingView: nil, accessoryView: nil, tapAction: tapAction)
 		}
 
 		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, leadingView: (any Sendable)?, accessoryView: (any Sendable)?, tapAction: (@Sendable () -> Void)? = nil) {
