@@ -88,25 +88,25 @@ extension Achtung {
 		public let id: String = UUID().uuidString
 		public let label: Text
 		public let kind: Kind
-		public let action: (@Sendable () -> Void)?
+		public let action: (@MainActor @Sendable () -> Void)?
 		
-		func pressed() {
+		@MainActor func pressed() {
 			self.action?()
 		}
 		
-		public static func `default`(_ label: Text, action: (@Sendable () -> Void)? = {}) -> Button {
+		public static func `default`(_ label: Text, action: (@MainActor @Sendable () -> Void)? = {}) -> Button {
 			Button(label: label, kind: .normal, action: action)
 		}
 		
-        public static func ok(_ label: Text = Text("OK"), action: (@Sendable () -> Void)? = {}) -> Button {
+        public static func ok(_ label: Text = Text("OK"), action: (@MainActor @Sendable () -> Void)? = {}) -> Button {
             Button(label: label, kind: .normal, action: action)
         }
         
-        public static func cancel(_ label: Text = Text("Cancel"), action: (@Sendable () -> Void)? = {}) -> Button {
+        public static func cancel(_ label: Text = Text("Cancel"), action: (@MainActor @Sendable () -> Void)? = {}) -> Button {
             Button(label: label, kind: .cancel, action: action)
         }
         
-		public static func destructive(_ label: Text, _ action: (@Sendable () -> Void)? = {}) -> Button {
+		public static func destructive(_ label: Text, _ action: (@MainActor @Sendable () -> Void)? = {}) -> Button {
 			Button(label: label, kind: .destructive, action: action)
 		}
 		

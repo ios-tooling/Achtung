@@ -48,13 +48,19 @@ extension Achtung {
 					}
 					
 					if let text = alert.fieldText {
-						TextField(alert.fieldPlaceholder, text: text)
-							.foregroundColor(foreground)
-							.font(.body)
-							.padding()
-							.background(RoundedRectangle(cornerRadius: 3).stroke(borderColor, lineWidth: 0.5))
-							.padding()
-							.frame(maxWidth: 300)
+						Group {
+							if #available(iOS 15.0, *) {
+								FocusedTextField(label: alert.fieldPlaceholder, text: text, alert: alert)
+							} else {
+								TextField(alert.fieldPlaceholder, text: text)
+							}
+						}
+						.foregroundColor(foreground)
+						.font(.body)
+						.padding()
+						.background(RoundedRectangle(cornerRadius: 3).stroke(borderColor, lineWidth: 0.5))
+						.padding()
+						.frame(maxWidth: 300)
 					}
 					
 					if alert.buttons.count <= 2 {
@@ -98,5 +104,27 @@ extension Achtung {
 			}
 		}
 		
+	}
+}
+
+@available(iOS 15.0, *)
+struct FocusedTextField: View {
+	let label: String
+	@Binding var text: String
+	@FocusState var isFocused: Bool
+	let alert: Achtung.Alert
+	
+	var body: some View {
+		TextField(label, text: $text)
+			.focused($isFocused, equals: true)
+			.onAppear {
+				isFocused = true
+			}
+			.onSubmit {
+				if let defaultButton = alert.buttons.first(where: { $0.kind == .normal })  {
+					defaultButton.action?()
+					alert.buttonPressed()
+				}
+			}
 	}
 }
