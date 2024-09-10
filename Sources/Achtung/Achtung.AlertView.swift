@@ -54,6 +54,7 @@ extension Achtung {
 							.padding()
 							.background(RoundedRectangle(cornerRadius: 3).stroke(borderColor, lineWidth: 0.5))
 							.padding()
+							.frame(maxWidth: 300)
 					}
 					
 					if alert.buttons.count <= 2 {
