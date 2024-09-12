@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-@available(OSX 10.15, iOS 13.0, *)
+@available(OSX 10.15, iOS 14.0, *)
 extension Achtung {
 	@MainActor struct AlertView: View {
 		let alert: Achtung.Alert
 		var foreground: Color { alert.foregroundColor ?? Achtung.instance.alertForegroundColor }
 		var borderColor: Color { alert.borderColor ?? Achtung.instance.alertBorderColor  }
 		var backgroundColor: Color { alert.backgroundColor ?? Achtung.instance.alertBackgroundColor  }
+		@State private var fieldText = ""
 		
 		var radius: CGFloat = 8
 		
@@ -47,12 +48,19 @@ extension Achtung {
 							.frame(maxWidth: 250)
 					}
 					
-					if let text = alert.fieldText {
+					if let fieldInfo = alert.fieldInfo {
 						Group {
 							if #available(iOS 15.0, *) {
-								FocusedTextField(label: alert.fieldPlaceholder, text: text, alert: alert)
+								FocusedTextField(label: fieldInfo.placeholder, text: $fieldText, alert: alert)
 							} else {
-								TextField(alert.fieldPlaceholder, text: text)
+								TextField(fieldInfo.placeholder, text: $fieldText)
+							}
+						}
+						.onChange(of: fieldText) { newValue in
+							if let limit = fieldInfo.limit, newValue.count > limit {
+								fieldText = fieldInfo.text.wrappedValue
+							} else {
+								fieldInfo.text.wrappedValue = newValue
 							}
 						}
 						.foregroundColor(foreground)

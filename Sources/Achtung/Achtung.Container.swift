@@ -16,10 +16,12 @@ extension Achtung {
 		@ObservedObject var achtung = Achtung.instance
 		
 		@ViewBuilder var alerts: some View {
-			let count = achtung.pendingAlerts.count - 1
-			ForEach(achtung.pendingAlerts.indices, id: \.self) { index in
-				Achtung.AlertView(alert: achtung.pendingAlerts[count - index])
-					.offset(x: -CGFloat(count - index) * 10, y: -CGFloat(count - index) * 10)
+			if #available(iOS 14.0, *) {
+				let count = achtung.pendingAlerts.count - 1
+				ForEach(achtung.pendingAlerts.indices, id: \.self) { index in
+					Achtung.AlertView(alert: achtung.pendingAlerts[count - index])
+						.offset(x: -CGFloat(count - index) * 10, y: -CGFloat(count - index) * 10)
+				}
 			}
 		}
 		

@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-extension AnyView: @unchecked Sendable { }
-extension LocalizedStringKey: @unchecked Sendable { }
+extension AnyView: @unchecked @retroactive Sendable { }
+extension LocalizedStringKey: @unchecked @retroactive Sendable { }
 
 public extension Achtung {
 	static nonisolated let onScreenTime: TimeInterval = 8
