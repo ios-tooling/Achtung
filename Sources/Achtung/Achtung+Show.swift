@@ -45,6 +45,10 @@ extension Achtung {
 				withAnimation(.linear(duration: Achtung.showAlertDuration)) {
 					pendingAlerts.append(alert)
 				}
+			} else if let tag = alert.tag {
+				if !pendingAlerts.contains(where: { $0.tag == tag }) {
+					pendingAlerts.append(alert)
+				}
 			} else {
 				pendingAlerts.append(alert)
 			}
