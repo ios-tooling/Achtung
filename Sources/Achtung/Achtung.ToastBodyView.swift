@@ -44,7 +44,9 @@ import SwiftUI
 				GeometryReader { geometry in
 					Color.clear
 						.onAppear {
-							Achtung.instance.hostWindow?.activeToastFrame = geometry.frame(in: .global)
+							#if os(iOS)
+								Achtung.instance.hostWindow?.activeToastFrame = geometry.frame(in: .global)
+							#endif
 						}
 				}
 			)

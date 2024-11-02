@@ -65,7 +65,7 @@ public extension Achtung {
 @available(OSX 10.15, iOS 13.0, *)
 public extension Achtung {
 	func setup() { }
-	func isSetup() -> Bool { false }
+	var isSetup: Bool { false }
 }
 #endif
 #endif

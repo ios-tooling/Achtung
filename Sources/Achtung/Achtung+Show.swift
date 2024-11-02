@@ -52,7 +52,9 @@ extension Achtung {
 			} else {
 				pendingAlerts.append(alert)
 			}
-			hostWindow?.isEnabled = !pendingAlerts.isEmpty
+			#if os(iOS)
+				hostWindow?.isEnabled = !pendingAlerts.isEmpty
+			#endif
 		}
 	}
 
@@ -81,7 +83,9 @@ extension Achtung {
 		if let index = self.pendingAlerts.firstIndex(of: pending) {
 			withAnimation(.linear(duration: Achtung.hideAlertDuration)) {
 				self.pendingAlerts.remove(at: index)
-				hostWindow?.isEnabled = !pendingAlerts.isEmpty
+				#if os(iOS)
+					hostWindow?.isEnabled = !pendingAlerts.isEmpty
+				#endif
 			}
 		}
 	}
@@ -129,7 +133,7 @@ extension View {
 			
 		case .normal:
 			
-			if #available(iOS 16.0, *) {
+			if #available(iOS 16.0, macOS 13, *) {
 				self
 					.bold()
 			} else {

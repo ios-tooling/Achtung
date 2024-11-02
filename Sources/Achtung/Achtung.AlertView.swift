@@ -50,7 +50,7 @@ extension Achtung {
 					
 					if let fieldInfo = alert.fieldInfo {
 						Group {
-							if #available(iOS 15.0, *) {
+							if #available(iOS 15.0, macOS 12, *) {
 								FocusedTextField(label: fieldInfo.placeholder, text: $fieldText, alert: alert)
 							} else {
 								TextField(fieldInfo.placeholder, text: $fieldText)
@@ -115,7 +115,7 @@ extension Achtung {
 	}
 }
 
-@available(iOS 15.0, *)
+@available(OSX 12, iOS 14.0, *)
 struct FocusedTextField: View {
 	let label: String
 	@Binding var text: String
