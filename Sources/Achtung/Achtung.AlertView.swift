@@ -115,7 +115,7 @@ extension Achtung {
 	}
 }
 
-@available(OSX 12, iOS 14.0, *)
+@available(OSX 12, iOS 15.0, *)
 struct FocusedTextField: View {
 	let label: String
 	@Binding var text: String
