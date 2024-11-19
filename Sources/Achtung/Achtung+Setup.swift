@@ -44,6 +44,7 @@ public extension Achtung {
 	class HostWindow: UIWindow {
 		public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 			guard let hitView = super.hitTest(point, with: event) else { return nil }
+			if !Achtung.instance.pendingAlerts.isEmpty { return hitView }
 			return rootViewController?.view == hitView ? nil : hitView
 		}
 	}
