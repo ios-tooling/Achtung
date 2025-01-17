@@ -17,8 +17,12 @@ public actor AchtungNotifications: NSObject {
 	var isAuthorized = false
 	
 	public func requestPermissions() async throws {
-		isAuthorized = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
-		UNUserNotificationCenter.current().delegate = self
+		#if targetEnvironment(simulator)
+		
+		#else
+			isAuthorized = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+			UNUserNotificationCenter.current().delegate = self
+		#endif
 	}
 	
 	@discardableResult public func playSound(named: String, at date: Date? = nil) -> String {
