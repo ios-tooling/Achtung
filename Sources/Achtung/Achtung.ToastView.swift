@@ -16,7 +16,11 @@ extension Achtung {
 			.transition(.move(edge: .top))
 			.zIndex(100)
 			.onTapGesture {
-				if let action = toast.tapAction { action() }
+				if let action = toast.tapAction {
+					action()
+				} else if let sharingTitle = toast.sharingTitle {
+					UIApplication.share(something: [sharingTitle + "\n\n" + (toast.title ?? "") + "\n" + (toast.message ?? "")])
+				}
 				Achtung.instance.dismissCurrentToast()
 			}
 		}
