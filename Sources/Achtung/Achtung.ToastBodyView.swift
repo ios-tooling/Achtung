@@ -16,7 +16,7 @@ import SwiftUI
 				if let leading = toast.leading as? AnyView {
 					leading
 				}
-				VStack() {
+				VStack(alignment: .trailing) {
 					VStack(alignment: .leading) {
 						if let title = toast.title {
 							Text(title)
@@ -27,6 +27,15 @@ import SwiftUI
 					}
 					if let accessoryView = toast.accessoryView as? AnyView {
 						accessoryView
+					}
+					if let sharingTitle = toast.sharingTitle {
+						if #available(iOS 15.0, *) {
+							Button(sharingTitle, systemImage: "square.and.arrow.up") {
+								Achtung.instance.dismissCurrentToast()
+								toast.share()
+							}
+							.buttonStyle(.bordered)
+						}
 					}
 				}
 				.multilineTextAlignment(.leading)
@@ -61,5 +70,5 @@ import SwiftUI
 				.stroke(toast.borderColor ?? Achtung.instance.toastBorderColor, lineWidth: toast.borderWidth)
 		}
 	}
-
+	
 }

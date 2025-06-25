@@ -12,17 +12,17 @@ extension Achtung {
 		let toast: Achtung.Toast
 		var body: some View {
 			ToastBodyView(toast: toast)
-			.frame(maxHeight: .infinity, alignment: .top)
-			.transition(.move(edge: .top))
-			.zIndex(100)
-			.onTapGesture {
-				if let action = toast.tapAction {
-					action()
-				} else if let sharingTitle = toast.sharingTitle {
-					UIApplication.share(something: [sharingTitle + "\n\n" + (toast.title ?? "") + "\n" + (toast.message ?? "")])
+				.frame(maxHeight: .infinity, alignment: .top)
+				.transition(.move(edge: .top))
+				.zIndex(100)
+				.onTapGesture {
+					if let action = toast.tapAction {
+						action()
+					} else if toast.sharingTitle != nil {
+						toast.share()
+					}
+					Achtung.instance.dismissCurrentToast()
 				}
-				Achtung.instance.dismissCurrentToast()
-			}
 		}
 	}
 }

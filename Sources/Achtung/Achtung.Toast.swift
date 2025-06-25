@@ -79,7 +79,12 @@ public extension Achtung {
 		}
 
 		@MainActor static let sample = Achtung.Toast("Look at me!")
+		
+		@MainActor func share() {
+			UIApplication.share(something: [(title ?? "") + "\n" + (message ?? "")])
+		}
 	}
+	
 }
 
 extension Error {
