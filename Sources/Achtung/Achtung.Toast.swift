@@ -18,7 +18,7 @@ public extension Achtung {
 	static nonisolated let showAlertDuration: TimeInterval = 0.2
 	static nonisolated let hideAlertDuration: TimeInterval = 0.2
 
-	struct Toast: Sendable {
+	struct Toast {
 		public var title: String?
 		public var localizedTitle: LocalizedStringKey?
 		public var message: String?
@@ -35,26 +35,26 @@ public extension Achtung {
 		public var cornerRadius: CGFloat = 8
 		public var titleFont = Font.system(size: 18, weight: .semibold)
 		public var messageFont = Font.system(size: 16, weight: .regular)
-		public var tapAction: (@Sendable () -> Void)?
+		public var tapAction: (@MainActor () async -> Void)?
 		public var accessoryView: (any Sendable)?
 		
-		@MainActor public init<Leading: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@Sendable () -> Void)? = nil) {
+		@MainActor public init<Leading: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leading: { AnyView(leadingView()) }, accessory: { EmptyView() }, tapAction: tapAction)
 		}
 		
-		@MainActor public init<Accessory: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder accessory: @escaping  () -> Accessory, tapAction: (@Sendable () -> Void)? = nil) {
+		@MainActor public init<Accessory: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder accessory: @escaping  () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leading: { EmptyView() }, accessory: { AnyView(accessory()) }, tapAction: tapAction)
 		}
 		
-		@MainActor public init<Leading: View, Accessory: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@Sendable () -> Void)? = nil) {
+		@MainActor public init<Leading: View, Accessory: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leadingView: AnyView(leading()), accessoryView: AnyView(accessory()), tapAction: tapAction)
 		}
 
-		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, tapAction: (@Sendable () -> Void)? = nil) {
+		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leadingView: nil, accessoryView: nil, tapAction: tapAction)
 		}
 
-		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, leadingView: (any Sendable)?, accessoryView: (any Sendable)?, tapAction: (@Sendable () -> Void)? = nil) {
+		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, leadingView: (any Sendable)?, accessoryView: (any Sendable)?, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.title = title
 			self.localizedTitle = localized
 			self.duration = duration ?? ((message == nil || title == nil) ? Achtung.onScreenTime : Achtung.longOnScreenTime)
@@ -81,7 +81,9 @@ public extension Achtung {
 		@MainActor static let sample = Achtung.Toast("Look at me!")
 		
 		@MainActor func share() {
-			UIApplication.share(something: [(title ?? "") + "\n" + (message ?? "")])
+			#if os(iOS)
+				UIApplication.share(something: [(title ?? "") + "\n" + (message ?? "")])
+			#endif
 		}
 	}
 	

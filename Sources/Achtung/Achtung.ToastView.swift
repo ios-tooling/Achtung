@@ -17,7 +17,7 @@ extension Achtung {
 				.zIndex(100)
 				.onTapGesture {
 					if let action = toast.tapAction {
-						action()
+						Task { await action() }
 					} else if toast.sharingTitle != nil {
 						toast.share()
 					}
