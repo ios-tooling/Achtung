@@ -93,6 +93,7 @@ extension Achtung {
 				#if os(iOS)
 					hostWindow?.isEnabled = !pendingAlerts.isEmpty
 				#endif
+				return
 			}
 		}
 	}
