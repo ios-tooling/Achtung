@@ -10,6 +10,8 @@ import SwiftUI
 extension AnyView: @unchecked @retroactive Sendable { }
 extension LocalizedStringKey: @unchecked @retroactive Sendable { }
 
+public enum ToastNativity: String, Sendable { case custom, ifPossible, native }
+
 public extension Achtung {
 	static nonisolated let onScreenTime: TimeInterval = 8
 	static nonisolated let longOnScreenTime: TimeInterval = 12
@@ -19,9 +21,11 @@ public extension Achtung {
 	static nonisolated let hideAlertDuration: TimeInterval = 0.2
 
 	struct Toast {
+		public let id = UUID().uuidString
 		public var title: String?
 		public var localizedTitle: LocalizedStringKey?
 		public var message: String?
+		public var nativity: ToastNativity
 		public var error: Error?
 		public let leading: (any Sendable)?
 		
@@ -38,33 +42,41 @@ public extension Achtung {
 		public var tapAction: (@MainActor () async -> Void)?
 		public var accessoryView: (any Sendable)?
 		
-		@MainActor public init<Leading: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@MainActor () async -> Void)? = nil) {
-			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leading: { AnyView(leadingView()) }, accessory: { EmptyView() }, tapAction: tapAction)
+		@MainActor public init<Leading: View>(_ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leading: { AnyView(leadingView()) }, accessory: { EmptyView() }, tapAction: tapAction)
 		}
 		
-		@MainActor public init<Accessory: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder accessory: @escaping  () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
-			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leading: { EmptyView() }, accessory: { AnyView(accessory()) }, tapAction: tapAction)
+		@MainActor public init<Accessory: View>(_ title: String? = nil,_ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder accessory: @escaping  () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leading: { EmptyView() }, accessory: { AnyView(accessory()) }, tapAction: tapAction)
 		}
 		
-		@MainActor public init<Leading: View, Accessory: View>(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
-			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leadingView: AnyView(leading()), accessoryView: AnyView(accessory()), tapAction: tapAction)
+		@MainActor public init<Leading: View, Accessory: View>(_ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leadingView: AnyView(leading()), accessoryView: AnyView(accessory()), tapAction: tapAction)
 		}
 
-		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, tapAction: (@MainActor () async -> Void)? = nil) {
-			self.init(title, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leadingView: nil, accessoryView: nil, tapAction: tapAction)
+		public init(_ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leadingView: nil, accessoryView: nil, tapAction: tapAction)
 		}
 
-		public init(_ title: String? = nil, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, leadingView: (any Sendable)?, accessoryView: (any Sendable)?, tapAction: (@MainActor () async -> Void)? = nil) {
+		public init(_ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, leadingView: (any Sendable)?, accessoryView: (any Sendable)?, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.title = title
 			self.localizedTitle = localized
 			self.duration = duration ?? ((message == nil || title == nil) ? Achtung.onScreenTime : Achtung.longOnScreenTime)
 			self.message = error?.achtungDescription ?? message
 			self.error = error
+			self.nativity = nativity
 			self.tapAction = tapAction
 			self.foregroundColor = foreground
 			self.borderColor = border
 			self.backgroundColor = background
 			self.sharingTitle = sharingTitle
+			
+			if nativity == .ifPossible {
+				self.nativity = .native
+			} else {
+				self.nativity = nativity
+			}
+			
 			if let leading = leadingView as? AnyView {
 				self.leading = leading
 			} else {

@@ -17,12 +17,8 @@ public actor AchtungNotifications: NSObject {
 	var isAuthorized = false
 	
 	public func requestPermissions() async throws {
-		#if targetEnvironment(simulator)
-		
-		#else
-			isAuthorized = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
-			UNUserNotificationCenter.current().delegate = self
-		#endif
+		isAuthorized = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+		UNUserNotificationCenter.current().delegate = self
 	}
 	
 	@discardableResult public func playSound(named: String, at date: Date? = nil) -> String {
@@ -52,6 +48,16 @@ public actor AchtungNotifications: NSObject {
 		return id
 	}
 	
+	func show(toast: Achtung.Toast) {
+		let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.01, repeats: false)
+		let content = UNMutableNotificationContent()
+		content.body = toast.message ?? ""
+		content.title = toast.title ?? ""
+		
+		let request = UNNotificationRequest(identifier: toast.id, content: content, trigger: trigger)
+		UNUserNotificationCenter.current().add(request)
+	}
+	
 	public func cancel(withID id: String) {
 		UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
 	}
@@ -63,6 +69,9 @@ extension AchtungNotifications: UNUserNotificationCenterDelegate {
 		[.banner, .badge, .sound]
 	}
 
+	public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+		print("Response! \(response)")
+	}
 }
 
 #endif

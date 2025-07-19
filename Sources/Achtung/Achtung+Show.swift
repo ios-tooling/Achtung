@@ -20,6 +20,13 @@ extension Achtung {
 	
 	nonisolated public func show(toast: Toast) {
 		Task { @MainActor in
+			if #available(iOS 16.0, *) {
+				if toast.nativity == .native {
+					await AchtungNotifications.instance.show(toast: toast)
+					return
+				}
+			}
+			
 			if isSettingUp {
 				try? await Task.sleep(nanoseconds: 500_000_000)
 			}
