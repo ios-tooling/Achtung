@@ -5,12 +5,10 @@
 //  Created by Ben Gottlieb on 5/17/24.
 //
 
-#if os(iOS)
-
 import UserNotifications
 
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13, *)
 public actor AchtungNotifications: NSObject {
 	public static let instance = AchtungNotifications()
 	
@@ -63,7 +61,7 @@ public actor AchtungNotifications: NSObject {
 	}
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13, *)
 extension AchtungNotifications: UNUserNotificationCenterDelegate {
 	public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
 		[.banner, .badge, .sound]
@@ -73,5 +71,3 @@ extension AchtungNotifications: UNUserNotificationCenterDelegate {
 		print("Response! \(response)")
 	}
 }
-
-#endif
