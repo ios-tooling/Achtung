@@ -11,12 +11,17 @@ import UserNotifications
 @available(iOS 16.0, macOS 13, *)
 public actor AchtungNotifications: NSObject {
 	public static let instance = AchtungNotifications()
+	var notificationTappedClosure: (@MainActor (String, String) async -> Void)?
 	
 	var isAuthorized = false
 	
 	public func requestPermissions() async throws {
 		isAuthorized = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
 		UNUserNotificationCenter.current().delegate = self
+	}
+	
+	public func setNotificationTappedClosure(_ closure: (@MainActor (String, String) async -> Void)?) {
+		notificationTappedClosure = closure
 	}
 	
 	@discardableResult public func playSound(named: String, at date: Date? = nil) -> String {
@@ -68,6 +73,9 @@ extension AchtungNotifications: UNUserNotificationCenterDelegate {
 	}
 
 	public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-		print("Response! \(response)")
+		Task {
+			guard let closure = notificationTappedClosure else { return }
+			await closure(response.notification.request.identifier, response.actionIdentifier)
+		}
 	}
 }
