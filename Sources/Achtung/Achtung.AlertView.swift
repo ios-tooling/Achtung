@@ -27,8 +27,8 @@ extension Achtung {
 					.stroke(borderColor)
 				
 				VStack() {
-					if alert.title != nil {
-						alert.title!
+					if let title = alert.title {
+						title
 							.font(.headline)
 							.multilineTextAlignment(.center)
 							.lineLimit(nil)
@@ -37,8 +37,8 @@ extension Achtung {
 							.frame(maxWidth: 250)
 					}
 					
-					if alert.message != nil {
-						alert.message!
+					if let message = alert.message {
+						message
 							.font(.body)
 							.fixedSize(horizontal: false, vertical: true)
 							.multilineTextAlignment(.center)

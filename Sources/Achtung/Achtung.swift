@@ -18,7 +18,7 @@ import Combine
 #endif
 	var toasts: [Toast] = []
 	var isSettingUp = false
-	weak var nextToastTimer: Timer?
+	var nextToastTimer: Timer?
 	public var errorDisplayLevel = ErrorLevel.standard
 	
 	
@@ -104,7 +104,7 @@ import Combine
 				currentToast = nil
 			}
 			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideToastDuration, repeats: false) { _ in
-				Task { @MainActor in self.showNextToast() }
+				Task { @MainActor [weak self] in self?.showNextToast() }
 			}
 		}
 	}

@@ -27,7 +27,7 @@ public extension Achtung {
 		return true
 	}
 	
-	func add(toScene: UIWindowScene?) {
+	@MainActor func add(toScene: UIWindowScene?) {
 		if hostWindow != nil { return }				 // already added
 		guard let scene = toScene ?? firstWindowScene else {
 			if !Self.isInPreview {
