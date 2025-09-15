@@ -13,7 +13,7 @@ import SwiftUI
 	var body: some View {
 		ZStack(alignment: .top) {
 			HStack() {
-				if let leading = toast.leading as? AnyView {
+				if let leading = toast.leading {
 					leading
 				}
 				VStack(alignment: .trailing) {
@@ -25,7 +25,7 @@ import SwiftUI
 							Text(message)
 						}
 					}
-					if let accessoryView = toast.accessoryView as? AnyView {
+					if let accessoryView = toast.accessoryView {
 						accessoryView
 					}
 					if let sharingTitle = toast.sharingTitle {

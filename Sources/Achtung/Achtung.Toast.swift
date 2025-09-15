@@ -7,9 +7,6 @@
 
 import SwiftUI
 
-extension AnyView: @unchecked @retroactive Sendable { }
-extension LocalizedStringKey: @unchecked @retroactive Sendable { }
-
 public enum ToastNativity: String, Sendable { case custom, ifPossible, native }
 
 public extension Achtung {
@@ -27,7 +24,7 @@ public extension Achtung {
 		public var message: String?
 		public var nativity: ToastNativity
 		public var error: Error?
-		public let leading: (any Sendable)?
+		public let leading: AnyView?
 		
 		public var duration: TimeInterval
 		
@@ -40,7 +37,7 @@ public extension Achtung {
 		public var titleFont = Font.system(size: 18, weight: .semibold)
 		public var messageFont = Font.system(size: 16, weight: .regular)
 		public var tapAction: (@MainActor () async -> Void)?
-		public var accessoryView: (any Sendable)?
+		public var accessoryView: AnyView?
 		
 		@MainActor public init<Leading: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(id: id, title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leading: { AnyView(leadingView()) }, accessory: { EmptyView() }, tapAction: tapAction)
@@ -55,10 +52,6 @@ public extension Achtung {
 		}
 
 		public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, tapAction: (@MainActor () async -> Void)? = nil) {
-			self.init(id: id, title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, leadingView: nil, accessoryView: nil, tapAction: tapAction)
-		}
-
-		public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, leadingView: (any Sendable)?, accessoryView: (any Sendable)?, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.id = id
 			self.title = title
 			self.localizedTitle = localized
@@ -71,24 +64,28 @@ public extension Achtung {
 			self.borderColor = border
 			self.backgroundColor = background
 			self.sharingTitle = sharingTitle
-			
-			if nativity == .ifPossible {
-				self.nativity = .native
-			} else {
-				self.nativity = nativity
-			}
-			
-			if let leading = leadingView as? AnyView {
-				self.leading = leading
-			} else {
-				self.leading = nil
-			}
+			self.nativity = nativity == .ifPossible ? .native : nativity
+			self.leading = nil
+			self.accessoryView = nil
+		}
 
-			if let accessory = accessoryView as? AnyView {
-				self.accessoryView = accessory
-			} else {
-				self.accessoryView = nil
-			}
+		@MainActor public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, leadingView: AnyView?, accessoryView: AnyView?, tapAction: (@MainActor () async -> Void)? = nil) {
+			
+			self.id = id
+			self.title = title
+			self.localizedTitle = localized
+			self.duration = duration ?? ((message == nil || title == nil) ? Achtung.onScreenTime : Achtung.longOnScreenTime)
+			self.message = error?.achtungDescription ?? message
+			self.error = error
+			self.nativity = nativity
+			self.tapAction = tapAction
+			self.foregroundColor = foreground
+			self.borderColor = border
+			self.backgroundColor = background
+			self.sharingTitle = sharingTitle
+			self.nativity = nativity == .ifPossible ? .native : nativity
+			self.leading = leadingView
+			self.accessoryView = accessoryView
 		}
 
 		@MainActor static let sample = Achtung.Toast("Look at me!")
