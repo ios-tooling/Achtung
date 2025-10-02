@@ -58,7 +58,7 @@ public extension Achtung {
 			let toast = Toast(title ?? "An error occurred", localized: localized, message: nil, error: error, leading: leading, accessory: accessory)
 			Achtung.instance.show(toast: toast)
 		}
-		print("⚠️ \(title ?? "Achtung"): \(error)")
+		print("⚠️ \(title ?? "Achtung"): \(error.achtungDescription)")
 	}
 }
 #else
