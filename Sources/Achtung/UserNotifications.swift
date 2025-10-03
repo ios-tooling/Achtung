@@ -57,6 +57,10 @@ public actor AchtungNotifications: NSObject {
 		content.body = toast.message ?? ""
 		content.title = toast.title ?? ""
 		
+		if UNUserNotificationCenter.current().delegate === self {
+			UNUserNotificationCenter.current().delegate = AchtungNotifications.instance
+		}
+		
 		let request = UNNotificationRequest(identifier: toast.id, content: content, trigger: trigger)
 		UNUserNotificationCenter.current().add(request)
 	}
