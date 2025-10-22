@@ -38,6 +38,25 @@ public struct RecordedErrorsView: View {
 							
 							Text(error.error.localizedDescription)
 								.font(.caption)
+							
+							if #available(iOS 15.0, macOS 13, watchOS 10, *) {
+								HStack(alignment: .bottom) {
+									HStack(spacing: 0) {
+										if let file = error.file { Text((file as NSString).lastPathComponent) }
+										if let line = error.line { Text(":\(line)") }
+									}
+									if let function = error.function { Text(function) }
+									
+									Spacer()
+									
+									if let date = error.date {
+										Text(date.formatted(date: .numeric, time: .complete))
+											.multilineTextAlignment(.trailing)
+									}
+								}
+								.font(.caption)
+								.foregroundStyle(.secondary)
+							}
 						}
 					}
 				}
