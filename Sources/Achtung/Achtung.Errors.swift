@@ -43,6 +43,12 @@ public extension Achtung {
 		}
 	}
 	
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: String, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
+		Task {
+			await show(error, level: level, title: title, file: file, function: function, line: line, leading: { EmptyView() }, accessory: { EmptyView() })
+		}
+	}
+	
 	static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory) {
 		show(error, level: level, file: file, function: function, line: line, leading: { EmptyView() }, accessory: accessory)
 	}

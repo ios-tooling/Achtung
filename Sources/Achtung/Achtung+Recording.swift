@@ -28,7 +28,7 @@ public extension Achtung {
 	}
 	
 	func _recordError(_ error: Error, title: LocalizedStringKey?, message: String?, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
-		print("⛔️\(title ?? "") \(message ?? "") : \(error.localizedDescription)")
+		print("⛔️\(title ?? "") \(message ?? "") : \(error.decodingDescription ?? error.localizedDescription)")
 		recordedErrors.append(.init(error: error, title: title, message: message, date: date, file: file, function: function, line: line))
 		while recordedErrors.count > recordedErrorLimit {
 			recordedErrors.removeFirst()

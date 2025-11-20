@@ -110,6 +110,7 @@ public extension Achtung {
 
 extension Error {
 	var achtungDescription: String {
+		if let decode = self.decodingDescription { return decode }
 		let localized = localizedDescription
 		if !localized.contains("error 0.)") { return localized }
 		
