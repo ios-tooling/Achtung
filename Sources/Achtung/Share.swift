@@ -35,7 +35,7 @@ extension UIViewController {
 }
 
 
-public extension UIViewController {
+extension UIViewController {
 	var presentedest: UIViewController {
 		return self.presentedViewController?.presentedest ?? self
 	}
@@ -70,7 +70,7 @@ extension UIApplication {
 	}
 }
 
-public extension UIWindowScene {
+extension UIWindowScene {
 	var frontWindow: UIWindow? {
 		if let window = self.windows.first(where: { $0.isKeyWindow }) { return window }
 		return self.windows.first
