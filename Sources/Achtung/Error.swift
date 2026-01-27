@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Error.swift
 //  Achtung
 //
 //  Created by Ben Gottlieb on 11/19/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Error {
+extension Error {
 	var decodingDescription: String? {
 		guard let error = self as? DecodingError else { return nil }
 		
