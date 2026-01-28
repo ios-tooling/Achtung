@@ -10,7 +10,7 @@ import Foundation
 
 public func fileDescription(_ file: StaticString, _ function: StaticString, _ line: UInt) -> String {
 	let fileName = NSString(string: file.description).lastPathComponent
-	let funcName = function.description.split(separator: "(").first!
-	
+	let funcName = function.description.split(separator: "(").first.map(String.init) ?? function.description
+
 	return "\(fileName):\(line) - \(funcName)"
 }

@@ -10,7 +10,7 @@
 import SwiftUI
 import Combine
 
-@available(OSX 10.15, iOS 13.0, *)
+@available(macOS 10.15, iOS 13.0, *)
 @MainActor public class Achtung: ObservableObject {
 	public static let instance = Achtung()
 #if os(iOS)

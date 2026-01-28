@@ -9,7 +9,9 @@
 import SwiftUI
 import Combine
 
-@available(OSX 10.15, iOS 13.0, *)
+public typealias SendableTag = Hashable & Sendable
+
+@available(macOS 10.15, iOS 13.0, *)
 extension Achtung {
 	public struct Alert: Identifiable, Equatable, Sendable {
 		public let id = UUID()

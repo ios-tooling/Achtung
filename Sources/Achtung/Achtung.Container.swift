@@ -10,7 +10,7 @@
 import SwiftUI
 import Combine
 
-@available(OSX 10.15, iOS 13.0, *)
+@available(macOS 10.15, iOS 13.0, *)
 extension Achtung {
 	struct Container: View {
 		@ObservedObject var achtung = Achtung.instance
@@ -30,7 +30,7 @@ extension Achtung {
 				if !achtung.pendingAlerts.isEmpty {
 					Rectangle()
 						.fill(Color.black.opacity(0.5))
-						.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+						.ignoresSafeArea(.all)
 						.allowsHitTesting(true)
 						.transition(.opacity)
 						.onTapGesture {

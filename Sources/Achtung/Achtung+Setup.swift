@@ -12,7 +12,7 @@ import SwiftUI
 import Combine
 import UIKit
 
-@available(OSX 10.15, iOS 13.0, *)
+@available(macOS 10.15, iOS 13.0, *)
 public extension Achtung {
 	static var isInPreview: Bool { ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" }
 
@@ -62,7 +62,7 @@ public extension Achtung {
 	}
 }
 #else
-@available(OSX 10.15, iOS 13.0, *)
+@available(macOS 10.15, iOS 13.0, *)
 public extension Achtung {
 	func setup() { }
 	var isSetup: Bool { false }

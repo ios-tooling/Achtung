@@ -10,7 +10,7 @@
 import SwiftUI
 import Combine
 
-@available(OSX 10.15, iOS 13.0, *)
+@available(macOS 10.15, iOS 13.0, *)
 extension Achtung {
 	nonisolated static public func show(toast: Toast) {
 		Task { @MainActor in
@@ -78,8 +78,8 @@ extension Achtung {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
 		
 		Task { @MainActor in
-			if let tag = tag, instance.pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
-			
+			if let tag, instance.pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
+
 			let alert = Achtung.Alert(text: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
 			show(alert: alert)
 		}
@@ -151,7 +151,7 @@ extension View {
 	}
 }
 
-@available(OSX 10.15, iOS 13.0, *)
+@available(macOS 10.15, iOS 13.0, *)
 extension View {
 	@MainActor public func achtung(title: Text? = nil, message: Text? = nil, tag: String? = nil, buttons: [Achtung.Button]) {
 		Achtung.show(title: title, message: message, tag: tag, buttons: buttons)

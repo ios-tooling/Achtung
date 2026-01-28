@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(OSX 10.15, iOS 14.0, *)
+@available(macOS 10.15, iOS 14.0, *)
 extension Achtung {
 	@MainActor struct AlertView: View {
 		let alert: Achtung.Alert
@@ -15,9 +15,9 @@ extension Achtung {
 		var borderColor: Color { alert.borderColor ?? Achtung.instance.alertBorderColor  }
 		var backgroundColor: Color { alert.backgroundColor ?? Achtung.instance.alertBackgroundColor  }
 		@State private var fieldText = ""
-		
+
 		var radius: CGFloat = 8
-		
+
 		public var body: some View {
 			ZStack() {
 				RoundedRectangle(cornerRadius: radius)
@@ -83,6 +83,11 @@ extension Achtung {
 			.padding(20)
 			.transition(AnyTransition.scale)
 			.contentShape(.rect)
+			.onAppear {
+				if let fieldInfo = alert.fieldInfo {
+					fieldText = fieldInfo.text.wrappedValue
+				}
+			}
 		}
 		
 		func buttonViews(minWidth: CGFloat) -> some View {
@@ -115,7 +120,7 @@ extension Achtung {
 	}
 }
 
-@available(OSX 12, iOS 15.0, *)
+@available(macOS 12, iOS 15.0, *)
 struct FocusedTextField: View {
 	let label: String
 	@Binding var text: String

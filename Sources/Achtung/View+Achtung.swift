@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-@available(OSX 10.15, iOS 13.0, *)
+@available(macOS 10.15, iOS 13.0, *)
 public extension View {
 	@MainActor func achtung<Item: Identifiable>(item target: Binding<Item?>, content: (Item) -> Achtung.Alert?) -> some View {
 		if let item = target.wrappedValue, let alert = content(item) {

@@ -30,7 +30,7 @@ extension Achtung {
 struct ToastView_Previews: PreviewProvider {
 	static var previews: some View {
 		ZStack() {
-			Color.gray.edgesIgnoringSafeArea(.all)
+			Color.gray.ignoresSafeArea(.all)
 			Achtung.ToastView(toast: .sample)
 		}
 	}

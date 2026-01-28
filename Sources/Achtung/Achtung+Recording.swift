@@ -21,7 +21,7 @@ public extension Achtung {
 		public var line: Int?
 	}
 	
-	nonisolated static func recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
+	static func recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
 		Task { @MainActor in
 			Achtung.instance._recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
 		}
