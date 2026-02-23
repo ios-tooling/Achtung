@@ -37,22 +37,30 @@ import Combine
 	
 	public var filterError: (Error) -> ErrorFilterResult = { _ in .display }
 	
-	public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) {
+	/// Async version - handles an error with filtering
+	@MainActor public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) async {
 		var displayed = error
-		
+
 		switch filterError(error) {
 		case .ignore: return
 		case .log:
-			Self.recordError(error, title: title)
+			await Self.recordError(error, title: title)
 			print("Achtung recorded: \(error)")
 			return
-			
+
 		case .display: break
 		case .replace(let err): displayed = err
 		}
-		
-		Self.recordError(error, title: title)
-		Self.show(displayed, level: level ?? .testing, title: title)
+
+		await Self.recordError(displayed, title: title)
+		await Self.show(displayed, level: level ?? .testing, title: title)
+	}
+
+	/// Non-async wrapper
+	public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) {
+		Task { @MainActor in
+			await handle(error, level: level, title: title)
+		}
 	}
 	
 	private init() { }

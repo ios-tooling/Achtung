@@ -21,17 +21,31 @@ public extension Achtung {
 		public var line: Int?
 	}
 	
+	/// Async version - records an error
+	@MainActor static func recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
+		await Achtung.instance._recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
+	}
+
+	/// Non-async wrapper
 	static func recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
 		Task { @MainActor in
-			Achtung.instance._recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
+			await recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
 		}
 	}
-	
-	func _recordError(_ error: Error, title: LocalizedStringKey?, message: String?, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
+
+	/// Async version - internal recording implementation
+	@MainActor func _recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
 		print("⛔️\(title ?? "") \(message ?? "") : \(error.decodingDescription ?? error.localizedDescription)")
 		recordedErrors.append(.init(error: error, title: title, message: message, date: date, file: file, function: function, line: line))
 		while recordedErrors.count > recordedErrorLimit {
 			recordedErrors.removeFirst()
+		}
+	}
+
+	/// Non-async wrapper for internal method
+	func _recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
+		Task { @MainActor in
+			await _recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
 		}
 	}
 	

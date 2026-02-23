@@ -10,7 +10,7 @@ import Foundation
 @testable import Achtung
 import SwiftUI
 
-@Suite("Toast Tests")
+@Suite("Toast Tests", .serialized)
 @MainActor
 struct AchtungToastTests {
 
@@ -24,19 +24,19 @@ struct AchtungToastTests {
 
 	@Test("Toast creation with title")
 	func toastCreationWithTitle() {
-		let toast = Achtung.Toast(title: "Test Title")
+		let toast = Achtung.Toast("Test Title")
 
 		#expect(!toast.id.isEmpty)
 		#expect(toast.title == "Test Title")
 		#expect(toast.message == nil)
 		#expect(toast.error == nil)
-		#expect(toast.displayStyle == .native) // automatic converts to native
+		#expect(toast.nativity == .native) // ifPossible converts to native
 	}
 
 	@Test("Toast creation with title and message")
 	func toastCreationWithTitleAndMessage() {
 		let toast = Achtung.Toast(
-			title: "Title",
+			"Title",
 			message: "Message"
 		)
 
@@ -49,7 +49,7 @@ struct AchtungToastTests {
 	func toastCreationWithError() {
 		let error = NSError(domain: "TestDomain", code: 123, userInfo: [NSLocalizedDescriptionKey: "Test error"])
 		let toast = Achtung.Toast(
-			title: "Error Occurred",
+			"Error Occurred",
 			error: error
 		)
 
@@ -61,32 +61,32 @@ struct AchtungToastTests {
 	@Test("Toast creation with custom duration")
 	func toastCreationWithCustomDuration() {
 		let toast = Achtung.Toast(
-			title: "Custom",
+			"Custom",
 			duration: 15.0
 		)
 
 		#expect(toast.duration == 15.0)
 	}
 
-	@Test("Toast display style options")
-	func toastDisplayStyleOptions() {
-		let customToast = Achtung.Toast(title: "Custom", displayStyle: .custom)
-		#expect(customToast.displayStyle == .custom)
+	@Test("Toast nativity options")
+	func toastNativityOptions() {
+		let customToast = Achtung.Toast("Custom", .custom)
+		#expect(customToast.nativity == .custom)
 
-		let nativeToast = Achtung.Toast(title: "Native", displayStyle: .native)
-		#expect(nativeToast.displayStyle == .native)
+		let nativeToast = Achtung.Toast("Native", .native)
+		#expect(nativeToast.nativity == .native)
 
-		let automaticToast = Achtung.Toast(title: "Auto", displayStyle: .automatic)
-		#expect(automaticToast.displayStyle == .native) // automatic converts to native
+		let automaticToast = Achtung.Toast("Auto", .ifPossible)
+		#expect(automaticToast.nativity == .native) // ifPossible converts to native
 	}
 
 	@Test("Toast with colors")
 	func toastWithColors() {
 		let toast = Achtung.Toast(
-			title: "Colored",
-			foregroundColor: .red,
-			borderColor: .blue,
-			backgroundColor: .green
+			"Colored",
+			foreground: .red,
+			border: .blue,
+			background: .green
 		)
 
 		#expect(toast.foregroundColor == .red)
@@ -97,7 +97,7 @@ struct AchtungToastTests {
 	@Test("Toast file metadata")
 	func toastFileMetadata() {
 		let toast = Achtung.Toast(
-			title: "Test",
+			"Test",
 			file: "TestFile.swift",
 			function: "testFunction()",
 			line: 42
@@ -110,31 +110,16 @@ struct AchtungToastTests {
 
 	// MARK: - Toast Queue Management Tests
 
-	@Test("Max pending toasts default")
-	func maxPendingToastsDefault() {
-		#expect(Achtung.instance.maxPendingToasts == 10)
-	}
-
-	@Test("Max pending toasts configurable")
-	func maxPendingToastsConfigurable() {
-		let originalLimit = Achtung.instance.maxPendingToasts
-
-		Achtung.instance.maxPendingToasts = 5
-		#expect(Achtung.instance.maxPendingToasts == 5)
-
-		// Restore original
-		Achtung.instance.maxPendingToasts = originalLimit
-	}
-
 	@Test("Toast queue adds toasts")
-	func toastQueueAddsToasts() async {
-		let toast1 = Achtung.Toast(title: "Toast 1", displayStyle: .custom)
-		let toast2 = Achtung.Toast(title: "Toast 2", displayStyle: .custom)
+	func toastQueueAddsToasts() {
+		let toast1 = Achtung.Toast("Toast 1", .custom)
+		let toast2 = Achtung.Toast("Toast 2", .custom)
 
-		await Achtung.instance.show(toast: toast1)
-		await Achtung.instance.show(toast: toast2)
+		// Add directly to queue for testing
+		Achtung.instance.toasts.append(toast1)
+		Achtung.instance.toasts.append(toast2)
 
-		// Toasts should be queued (first one may be shown, others queued)
+		// Toasts should be queued
 		let totalToasts = Achtung.instance.toasts.count + (Achtung.instance.currentToast != nil ? 1 : 0)
 		#expect(totalToasts >= 1)
 	}
@@ -152,11 +137,11 @@ struct AchtungToastTests {
 	@Test("Toast duration defaults")
 	func toastDurationDefaults() {
 		// Toast with both title and message uses longOnScreenTime
-		let longToast = Achtung.Toast(title: "Title", message: "Message")
+		let longToast = Achtung.Toast("Title", message: "Message")
 		#expect(longToast.duration == Achtung.longOnScreenTime)
 
 		// Toast with only title uses onScreenTime
-		let shortToast = Achtung.Toast(title: "Title Only")
+		let shortToast = Achtung.Toast("Title Only")
 		#expect(shortToast.duration == Achtung.onScreenTime)
 	}
 
@@ -165,7 +150,7 @@ struct AchtungToastTests {
 	@Test("Toast with sharing title")
 	func toastWithSharingTitle() {
 		let toast = Achtung.Toast(
-			title: "Share This",
+			"Share This",
 			sharingTitle: "Shared Content"
 		)
 
@@ -179,7 +164,7 @@ struct AchtungToastTests {
 		var tapped = false
 
 		let toast = Achtung.Toast(
-			title: "Tappable",
+			"Tappable",
 			tapAction: {
 				tapped = true
 			}

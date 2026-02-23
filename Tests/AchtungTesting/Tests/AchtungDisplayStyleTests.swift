@@ -2,187 +2,169 @@
 //  AchtungDisplayStyleTests.swift
 //  AchtungTestingTests
 //
-//  Tests for Toast Display Style (formerly Nativity)
+//  Tests for Toast Nativity
 //
 
 import Testing
 import Foundation
+import SwiftUI
 @testable import Achtung
 
-@Suite("Display Style Tests")
+@Suite("Toast Nativity Tests", .serialized)
 struct AchtungDisplayStyleTests {
 
-	// MARK: - Display Style Enum Tests
+	// MARK: - Nativity Enum Tests
 
-	@Test("Display style cases")
-	func displayStyleCases() {
-		let custom: ToastDisplayStyle = .custom
-		let native: ToastDisplayStyle = .native
-		let automatic: ToastDisplayStyle = .automatic
+	@Test("Nativity cases")
+	func nativityCases() {
+		let custom: ToastNativity = .custom
+		let native: ToastNativity = .native
+		let ifPossible: ToastNativity = .ifPossible
 
 		#expect(custom.rawValue == "custom")
 		#expect(native.rawValue == "native")
-		#expect(automatic.rawValue == "automatic")
+		#expect(ifPossible.rawValue == "ifPossible")
 	}
 
-	@Test("Display style from raw value")
-	func displayStyleFromRawValue() {
-		#expect(ToastDisplayStyle(rawValue: "custom") == .custom)
-		#expect(ToastDisplayStyle(rawValue: "native") == .native)
-		#expect(ToastDisplayStyle(rawValue: "automatic") == .automatic)
+	@Test("Nativity from raw value")
+	func nativityFromRawValue() {
+		#expect(ToastNativity(rawValue: "custom") == .custom)
+		#expect(ToastNativity(rawValue: "native") == .native)
+		#expect(ToastNativity(rawValue: "ifPossible") == .ifPossible)
 	}
 
-	// MARK: - Deprecated ToastNativity Tests
+	// MARK: - Toast Nativity Behavior Tests
 
-	@Test("Deprecated toast nativity alias")
-	func deprecatedToastNativityAlias() {
-		// Test that the deprecated alias still works
-		let _: ToastNativity = .custom
-		let _: ToastNativity = .native
-		let _: ToastNativity = .automatic
-
-		// All should compile without errors
-		#expect(true)
+	@Test("Toast with custom nativity")
+	func toastWithCustomNativity() {
+		let toast = Achtung.Toast("Custom", .custom)
+		#expect(toast.nativity == .custom)
 	}
 
-	@Test("Deprecated ifPossible maps to automatic")
-	func deprecatedIfPossibleMapsToAutomatic() {
-		// Test that .ifPossible maps to .automatic
-		#expect(ToastDisplayStyle.ifPossible == .automatic)
+	@Test("Toast with native nativity")
+	func toastWithNativeNativity() {
+		let toast = Achtung.Toast("Native", .native)
+		#expect(toast.nativity == .native)
 	}
 
-	// MARK: - Toast Display Style Behavior Tests
+	@Test("Toast with if possible nativity")
+	func toastWithIfPossibleNativity() {
+		let toast = Achtung.Toast("If Possible", .ifPossible)
 
-	@Test("Toast with custom display style")
-	func toastWithCustomDisplayStyle() {
-		let toast = Achtung.Toast(title: "Custom", displayStyle: .custom)
-		#expect(toast.displayStyle == .custom)
+		// .ifPossible converts to .native internally
+		#expect(toast.nativity == .native)
 	}
 
-	@Test("Toast with native display style")
-	func toastWithNativeDisplayStyle() {
-		let toast = Achtung.Toast(title: "Native", displayStyle: .native)
-		#expect(toast.displayStyle == .native)
+	@Test("Toast default nativity")
+	func toastDefaultNativity() {
+		// When not specified, should default to .ifPossible (which becomes .native)
+		let toast = Achtung.Toast("Default")
+
+		#expect(toast.nativity == .native)
 	}
 
-	@Test("Toast with automatic display style")
-	func toastWithAutomaticDisplayStyle() {
-		let toast = Achtung.Toast(title: "Automatic", displayStyle: .automatic)
+	// MARK: - Nativity with Different Toast Types
 
-		// .automatic converts to .native internally
-		#expect(toast.displayStyle == .native)
-	}
-
-	@Test("Toast default display style")
-	func toastDefaultDisplayStyle() {
-		// When not specified, should default to .automatic (which becomes .native)
-		let toast = Achtung.Toast(title: "Default")
-
-		#expect(toast.displayStyle == .native)
-	}
-
-	// MARK: - Display Style with Different Toast Types
-
-	@Test("Display style with error")
-	func displayStyleWithError() {
+	@Test("Nativity with error")
+	func nativityWithError() {
 		let error = NSError(domain: "Test", code: 1)
 
 		let customToast = Achtung.Toast(
-			title: "Error",
-			displayStyle: .custom,
+			"Error",
+			.custom,
 			error: error
 		)
-		#expect(customToast.displayStyle == .custom)
+		#expect(customToast.nativity == .custom)
 		#expect(customToast.error != nil)
 
 		let nativeToast = Achtung.Toast(
-			title: "Error",
-			displayStyle: .native,
+			"Error",
+			.native,
 			error: error
 		)
-		#expect(nativeToast.displayStyle == .native)
+		#expect(nativeToast.nativity == .native)
 	}
 
-	@Test("Display style with message")
-	func displayStyleWithMessage() {
+	@Test("Nativity with message")
+	func nativityWithMessage() {
 		let toast = Achtung.Toast(
-			title: "Title",
-			displayStyle: .custom,
+			"Title",
+			.custom,
 			message: "Message"
 		)
 
-		#expect(toast.displayStyle == .custom)
+		#expect(toast.nativity == .custom)
 		#expect(toast.message == "Message")
 	}
 
-	@Test("Display style with custom duration")
-	func displayStyleWithCustomDuration() {
+	@Test("Nativity with custom duration")
+	func nativityWithCustomDuration() {
 		let toast = Achtung.Toast(
-			title: "Timed",
-			displayStyle: .custom,
+			"Timed",
+			.custom,
 			duration: 20.0
 		)
 
-		#expect(toast.displayStyle == .custom)
+		#expect(toast.nativity == .custom)
 		#expect(toast.duration == 20.0)
 	}
 
-	// MARK: - Display Style Consistency Tests
+	// MARK: - Nativity Consistency Tests
 
-	@Test("Multiple toasts with different styles")
-	func multipleToastsWithDifferentStyles() {
+	@Test("Multiple toasts with different nativity")
+	func multipleToastsWithDifferentNativity() {
 		let toasts = [
-			Achtung.Toast(title: "Custom 1", displayStyle: .custom),
-			Achtung.Toast(title: "Native 1", displayStyle: .native),
-			Achtung.Toast(title: "Auto 1", displayStyle: .automatic),
-			Achtung.Toast(title: "Custom 2", displayStyle: .custom),
+			Achtung.Toast("Custom 1", .custom),
+			Achtung.Toast("Native 1", .native),
+			Achtung.Toast("IfPossible 1", .ifPossible),
+			Achtung.Toast("Custom 2", .custom),
 		]
 
-		#expect(toasts[0].displayStyle == .custom)
-		#expect(toasts[1].displayStyle == .native)
-		#expect(toasts[2].displayStyle == .native) // automatic -> native
-		#expect(toasts[3].displayStyle == .custom)
+		#expect(toasts[0].nativity == .custom)
+		#expect(toasts[1].nativity == .native)
+		#expect(toasts[2].nativity == .native) // ifPossible -> native
+		#expect(toasts[3].nativity == .custom)
 	}
 
-	// MARK: - Display Style Sendable Conformance
+	// MARK: - Nativity Sendable Conformance
 
-	@Test("Display style is sendable")
-	func displayStyleIsSendable() {
-		// ToastDisplayStyle should be Sendable (as it's a String-based enum)
-		let style: ToastDisplayStyle = .custom
+	@Test("Nativity is sendable")
+	func nativityIsSendable() {
+		// ToastNativity should be Sendable (as it's a String-based enum)
+		let nativity: ToastNativity = .custom
 
 		Task {
-			let _ = style // Should compile without warnings
+			let _ = nativity // Should compile without warnings
 		}
 
 		#expect(true)
 	}
 
-	// MARK: - Display Style in Different Contexts
+	// MARK: - Nativity in Different Contexts
 
-	@Test("Display style in toast initializers")
-	func displayStyleInToastInitializers() {
-		// Test all different initializer overloads maintain display style
+	@Test("Nativity in toast initializers")
+	func nativityInToastInitializers() {
+		// Test all different initializer overloads maintain nativity
 
 		let toast1 = Achtung.Toast(
 			id: "test1",
-			title: "Test 1",
-			displayStyle: .custom
+			"Test 1",
+			.custom
 		)
-		#expect(toast1.displayStyle == .custom)
+		#expect(toast1.nativity == .custom)
 
 		let toast2 = Achtung.Toast(
-			title: "Test 2",
-			displayStyle: .native,
+			"Test 2",
+			.native,
 			message: "Message"
 		)
-		#expect(toast2.displayStyle == .native)
+		#expect(toast2.nativity == .native)
 
 		let toast3 = Achtung.Toast(
-			title: "Test 3",
-			displayStyle: .custom,
+			"Test 3",
+			.custom,
 			error: NSError(domain: "Test", code: 1)
 		)
-		#expect(toast3.displayStyle == .custom)
+		#expect(toast3.nativity == .custom)
 	}
 }

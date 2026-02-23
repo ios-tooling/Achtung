@@ -5,51 +5,59 @@
 //  Basic tests for Achtung framework
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import Achtung
 
-@available(macOS 10.15, iOS 14.0, *)
-final class AchtungTests: XCTestCase {
+@Suite("Basic Tests")
+struct AchtungTests {
 
-	func testErrorLevelComparison() {
-		XCTAssertLessThan(Achtung.ErrorLevel.debug, .testing)
-		XCTAssertLessThan(Achtung.ErrorLevel.testing, .standard)
-		XCTAssertGreaterThan(Achtung.ErrorLevel.standard, .debug)
+	@Test("Error level comparison")
+	func errorLevelComparison() {
+		#expect(Achtung.ErrorLevel.debug < .testing)
+		#expect(Achtung.ErrorLevel.testing < .standard)
+		#expect(Achtung.ErrorLevel.standard > .debug)
 	}
 
-	func testFileDescriptionWithSimpleFunction() {
+	@Test("File description with simple function")
+	func fileDescriptionWithSimpleFunction() {
 		let result = fileDescription("Test.swift", "myFunction()", 42)
-		XCTAssertTrue(result.contains("Test.swift"))
-		XCTAssertTrue(result.contains("42"))
-		XCTAssertTrue(result.contains("myFunction"))
+		#expect(result.contains("Test.swift"))
+		#expect(result.contains("42"))
+		#expect(result.contains("myFunction"))
 	}
 
-	func testFileDescriptionWithComplexFunction() {
+	@Test("File description with complex function")
+	func fileDescriptionWithComplexFunction() {
 		let result = fileDescription("Complex.swift", "myFunction(param1:param2:)", 100)
-		XCTAssertTrue(result.contains("Complex.swift"))
-		XCTAssertTrue(result.contains("100"))
-		XCTAssertTrue(result.contains("myFunction"))
+		#expect(result.contains("Complex.swift"))
+		#expect(result.contains("100"))
+		#expect(result.contains("myFunction"))
 	}
 
-	func testFileDescriptionWithNoParentheses() {
+	@Test("File description with no parentheses")
+	func fileDescriptionWithNoParentheses() {
 		// This tests the fix for the force unwrap issue
 		let result = fileDescription("NoParens.swift", "someProperty", 5)
-		XCTAssertTrue(result.contains("NoParens.swift"))
-		XCTAssertTrue(result.contains("5"))
-		XCTAssertTrue(result.contains("someProperty"))
+		#expect(result.contains("NoParens.swift"))
+		#expect(result.contains("5"))
+		#expect(result.contains("someProperty"))
 	}
 
-	func testToastDisplayStyleDeprecatedAlias() {
-		// Test that the deprecated ToastNativity alias still works
+	@Test("Toast nativity cases")
+	func toastNativityCases() {
+		// Test that ToastNativity works
 		let _: ToastNativity = .custom
 		let _: ToastNativity = .native
-		let _: ToastNativity = .automatic
+		let _: ToastNativity = .ifPossible
 
-		// Test deprecated .ifPossible still maps to .automatic
-		XCTAssertEqual(ToastDisplayStyle.ifPossible, .automatic)
+		#expect(ToastNativity.custom.rawValue == "custom")
+		#expect(ToastNativity.native.rawValue == "native")
+		#expect(ToastNativity.ifPossible.rawValue == "ifPossible")
 	}
 
-	func testErrorFilterResults() {
+	@Test("Error filter results")
+	func errorFilterResults() {
 		let ignoreResult = Achtung.ErrorFilterResult.ignore
 		let logResult = Achtung.ErrorFilterResult.log
 		let displayResult = Achtung.ErrorFilterResult.display
@@ -57,23 +65,23 @@ final class AchtungTests: XCTestCase {
 		// Just ensure all cases compile and are accessible
 		switch ignoreResult {
 		case .ignore: break
-		case .log: XCTFail()
-		case .display: XCTFail()
-		case .replace: XCTFail()
+		case .log: Issue.record("Should be .ignore")
+		case .display: Issue.record("Should be .ignore")
+		case .replace: Issue.record("Should be .ignore")
 		}
 
 		switch logResult {
-		case .ignore: XCTFail()
+		case .ignore: Issue.record("Should be .log")
 		case .log: break
-		case .display: XCTFail()
-		case .replace: XCTFail()
+		case .display: Issue.record("Should be .log")
+		case .replace: Issue.record("Should be .log")
 		}
 
 		switch displayResult {
-		case .ignore: XCTFail()
-		case .log: XCTFail()
+		case .ignore: Issue.record("Should be .display")
+		case .log: Issue.record("Should be .display")
 		case .display: break
-		case .replace: XCTFail()
+		case .replace: Issue.record("Should be .display")
 		}
 	}
 }

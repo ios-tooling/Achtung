@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 @testable import Achtung
 
-@Suite("Utility Tests")
+@Suite("Utility Tests", .serialized)
 struct AchtungUtilityTests {
 
 	// MARK: - File Description Utility Tests
@@ -114,9 +114,6 @@ struct AchtungUtilityTests {
 		#expect(Achtung.hideToastDuration == 0.4)
 		#expect(Achtung.showAlertDuration == 0.2)
 		#expect(Achtung.hideAlertDuration == 0.2)
-
-		// Setup timeout
-		#expect(Achtung.setupTimeout == 0.5)
 	}
 
 	@Test("Constants are positive")
@@ -127,7 +124,6 @@ struct AchtungUtilityTests {
 		#expect(Achtung.hideToastDuration > 0)
 		#expect(Achtung.showAlertDuration > 0)
 		#expect(Achtung.hideAlertDuration > 0)
-		#expect(Achtung.setupTimeout > 0)
 	}
 
 	// MARK: - Text Extension Tests
@@ -158,7 +154,7 @@ struct AchtungUtilityTests {
 
 	@Test("Toast with empty strings")
 	func toastWithEmptyStrings() {
-		let toast = Achtung.Toast(title: "", message: "")
+		let toast = Achtung.Toast("", message: "")
 
 		#expect(!toast.id.isEmpty)
 		#expect(toast.title == "")
@@ -168,7 +164,7 @@ struct AchtungUtilityTests {
 	@Test("Toast with very long strings")
 	func toastWithVeryLongStrings() {
 		let longString = String(repeating: "A", count: 1000)
-		let toast = Achtung.Toast(title: longString, message: longString)
+		let toast = Achtung.Toast(longString, message: longString)
 
 		#expect(toast.title == longString)
 		#expect(toast.message == longString)
@@ -179,7 +175,7 @@ struct AchtungUtilityTests {
 		let title = "Test 🎉 Title"
 		let message = "Message with\nnewlines\tand\ttabs"
 
-		let toast = Achtung.Toast(title: title, message: message)
+		let toast = Achtung.Toast(title, message: message)
 
 		#expect(toast.title == title)
 		#expect(toast.message == message)
@@ -262,8 +258,8 @@ struct AchtungUtilityTests {
 
 	@Test("Toast identifiable")
 	func toastIdentifiable() {
-		let toast1 = Achtung.Toast(title: "Toast 1")
-		let toast2 = Achtung.Toast(title: "Toast 2")
+		let toast1 = Achtung.Toast("Toast 1")
+		let toast2 = Achtung.Toast("Toast 2")
 
 		#expect(toast1.id != toast2.id)
 	}
@@ -310,7 +306,6 @@ struct AchtungUtilityTests {
 		let instance = Achtung.instance
 
 		#expect(instance != nil)
-		#expect(instance.maxPendingToasts == 10)
 	}
 
 	// MARK: - Memory Tests
@@ -320,7 +315,7 @@ struct AchtungUtilityTests {
 		var weakToast: Achtung.Toast?
 
 		autoreleasepool {
-			let toast = Achtung.Toast(title: "Memory Test")
+			let toast = Achtung.Toast("Memory Test")
 			weakToast = toast
 			#expect(weakToast != nil)
 		}

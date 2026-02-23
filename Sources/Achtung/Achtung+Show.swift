@@ -12,76 +12,117 @@ import Combine
 
 @available(macOS 10.15, iOS 13.0, *)
 extension Achtung {
-	nonisolated static public func show(toast: Toast) {
-		Task { @MainActor in
-			Achtung.instance.show(toast: toast)
+	// MARK: - Toast Methods
+
+	/// Async version - shows a toast notification
+	@MainActor public func show(toast: Toast) async {
+		if #available(iOS 16.0, macOS 13, *) {
+			if toast.nativity == .native {
+				await AchtungNotifications.instance.show(toast: toast)
+				return
+			}
 		}
+
+		if isSettingUp {
+			try? await Task.sleep(nanoseconds: 500_000_000)
+		}
+		if !isSetup { return }
+		toasts.append(toast)
+		if nextToastTimer == nil { showNextToast() }
 	}
-	
+
+	/// Non-async wrapper for instance method
 	nonisolated public func show(toast: Toast) {
 		Task { @MainActor in
-			if #available(iOS 16.0, macOS 13, *) {
-				if toast.nativity == .native {
-					await AchtungNotifications.instance.show(toast: toast)
-					return
-				}
-			}
-			
-			if isSettingUp {
-				try? await Task.sleep(nanoseconds: 500_000_000)
-			}
-			if !isSetup { return }
-			toasts.append(toast)
-			if nextToastTimer == nil { showNextToast() }
+			await show(toast: toast)
 		}
 	}
 
-	nonisolated static public func show(alert: Achtung.Alert) {
+	/// Non-async wrapper for static method
+	nonisolated static public func show(toast: Toast) {
 		Task { @MainActor in
-			Achtung.instance.show(alert: alert)
+			await instance.show(toast: toast)
 		}
 	}
-	
-	nonisolated public func show(alert: Achtung.Alert) {
-		Task { @MainActor in
-			if isSettingUp {
-				try? await Task.sleep(nanoseconds: 500_000_000)
-			}
-			if !isSetup { return }
-			if pendingAlerts.isEmpty {
-				withAnimation(.linear(duration: Achtung.showAlertDuration)) {
-					pendingAlerts.append(alert)
-				}
-			} else if let tag = alert.tag {
-				if !pendingAlerts.contains(where: { $0.tag == tag }) {
-					pendingAlerts.append(alert)
-				}
-			} else {
+
+	// MARK: - Alert Methods
+
+	/// Async version - shows an alert
+	@MainActor public func show(alert: Achtung.Alert) async {
+		if isSettingUp {
+			try? await Task.sleep(nanoseconds: 500_000_000)
+		}
+		if !isSetup { return }
+		if pendingAlerts.isEmpty {
+			withAnimation(.linear(duration: Achtung.showAlertDuration)) {
 				pendingAlerts.append(alert)
 			}
-			#if os(iOS)
-				hostWindow?.isEnabled = !pendingAlerts.isEmpty
-			#endif
+		} else if let tag = alert.tag {
+			if !pendingAlerts.contains(where: { $0.tag == tag }) {
+				pendingAlerts.append(alert)
+			}
+		} else {
+			pendingAlerts.append(alert)
+		}
+		#if os(iOS)
+			hostWindow?.isEnabled = !pendingAlerts.isEmpty
+		#endif
+	}
+
+	/// Non-async wrapper for instance method
+	nonisolated public func show(alert: Achtung.Alert) {
+		Task { @MainActor in
+			await show(alert: alert)
 		}
 	}
 
-	public static func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
-		show(title: Text(title), message: Text(error.achtungDescription), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
-	}
-
-	public static func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
-		show(title: Text(title), message: message == nil ? nil : Text(message!), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
-	}
-
-
-	public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
-		guard title != nil || message != nil || buttons.isEmpty == false else { return }
-		
+	/// Non-async wrapper for static method
+	nonisolated static public func show(alert: Achtung.Alert) {
 		Task { @MainActor in
-			if let tag, instance.pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
+			await instance.show(alert: alert)
+		}
+	}
 
-			let alert = Achtung.Alert(text: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
-			show(alert: alert)
+	// MARK: - Convenience Alert Methods
+
+	/// Async version - shows an alert with title, message, and buttons
+	@MainActor public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) async {
+		guard title != nil || message != nil || buttons.isEmpty == false else { return }
+
+		if let tag, instance.pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
+
+		let alert = Achtung.Alert(text: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
+		await instance.show(alert: alert)
+	}
+
+	/// Non-async wrapper
+	public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
+		Task { @MainActor in
+			await show(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
+		}
+	}
+
+	/// Async version - shows an alert with String title and message
+	@MainActor public static func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) async {
+		await show(title: Text(title), message: message == nil ? nil : Text(message!), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
+	}
+
+	/// Non-async wrapper
+	public static func show(title: String, message: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
+		Task { @MainActor in
+			await show(title: title, message: message, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
+		}
+	}
+
+	/// Async version - shows an alert with error
+	@MainActor public static func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) async {
+		await show(title: Text(title), message: Text(error.achtungDescription), foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons ?? [.ok()])
+	}
+
+	/// Non-async wrapper
+	public static func show(title: String, error: Error, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]? = nil) {
+		Task { @MainActor in
+			await show(title: title, error: error, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
 		}
 	}
 	

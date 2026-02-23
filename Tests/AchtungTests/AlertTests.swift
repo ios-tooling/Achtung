@@ -5,15 +5,17 @@
 //  Tests for alert creation and tag-based deduplication
 //
 
-import XCTest
+import Testing
+import Foundation
 import SwiftUI
 @testable import Achtung
 
-@available(macOS 10.15, iOS 14.0, *)
+@Suite("Alert Tests")
 @MainActor
-final class AlertTests: XCTestCase {
+struct AlertTests {
 
-	func testAlertCreationWithStringTag() {
+	@Test("Alert creation with string tag")
+	func alertCreationWithStringTag() {
 		let alert = Achtung.Alert(
 			"Test Alert",
 			message: Text("Test Message"),
@@ -21,11 +23,12 @@ final class AlertTests: XCTestCase {
 			buttons: [.ok()]
 		)
 
-		XCTAssertEqual(alert.tag, "test-tag")
-		XCTAssertEqual(alert.buttons.count, 1)
+		#expect(alert.tag == "test-tag")
+		#expect(alert.buttons.count == 1)
 	}
 
-	func testAlertCreationWithEnumTag() {
+	@Test("Alert creation with enum tag")
+	func alertCreationWithEnumTag() {
 		enum AlertTag: String {
 			case networkError
 			case validationError
@@ -37,44 +40,48 @@ final class AlertTests: XCTestCase {
 			buttons: [.ok()]
 		)
 
-		XCTAssertEqual(alert.tag, AlertTag.networkError.rawValue)
+		#expect(alert.tag == AlertTag.networkError.rawValue)
 	}
 
-	func testAlertCreationWithoutTag() {
+	@Test("Alert creation without tag")
+	func alertCreationWithoutTag() {
 		let alert = Achtung.Alert(
 			"No Tag Alert",
 			buttons: [.ok()]
 		)
 
-		XCTAssertNil(alert.tag)
+		#expect(alert.tag == nil)
 	}
 
-	func testAlertEquality() {
+	@Test("Alert equality")
+	func alertEquality() {
 		let alert1 = Achtung.Alert("Test 1", buttons: [.ok()])
 		let alert2 = Achtung.Alert("Test 2", buttons: [.ok()])
 
 		// Alerts with different IDs should not be equal
-		XCTAssertNotEqual(alert1, alert2)
+		#expect(alert1 != alert2)
 
 		// Alert should be equal to itself
-		XCTAssertEqual(alert1, alert1)
+		#expect(alert1 == alert1)
 	}
 
-	func testButtonTypes() {
+	@Test("Button types")
+	func buttonTypes() {
 		let normalButton = Achtung.Button.default(Text("Normal"))
-		XCTAssertEqual(normalButton.kind, .normal)
+		#expect(normalButton.kind == .normal)
 
 		let okButton = Achtung.Button.ok()
-		XCTAssertEqual(okButton.kind, .normal)
+		#expect(okButton.kind == .normal)
 
 		let cancelButton = Achtung.Button.cancel()
-		XCTAssertEqual(cancelButton.kind, .cancel)
+		#expect(cancelButton.kind == .cancel)
 
 		let destructiveButton = Achtung.Button.destructive(Text("Delete"))
-		XCTAssertEqual(destructiveButton.kind, .destructive)
+		#expect(destructiveButton.kind == .destructive)
 	}
 
-	func testAlertFieldInfo() {
+	@Test("Alert field info")
+	func alertFieldInfo() {
 		@State var text = "Initial"
 		let binding = Binding(get: { text }, set: { text = $0 })
 
@@ -84,12 +91,13 @@ final class AlertTests: XCTestCase {
 			placeholder: "Enter text"
 		)
 
-		XCTAssertEqual(fieldInfo.limit, 100)
-		XCTAssertEqual(fieldInfo.placeholder, "Enter text")
-		XCTAssertEqual(fieldInfo.text.wrappedValue, "Initial")
+		#expect(fieldInfo.limit == 100)
+		#expect(fieldInfo.placeholder == "Enter text")
+		#expect(fieldInfo.text.wrappedValue == "Initial")
 	}
 
-	func testAlertWithFieldText() {
+	@Test("Alert with field text")
+	func alertWithFieldText() {
 		@State var text = ""
 		let binding = Binding(get: { text }, set: { text = $0 })
 
@@ -101,8 +109,8 @@ final class AlertTests: XCTestCase {
 			buttons: [.ok(), .cancel()]
 		)
 
-		XCTAssertNotNil(alert.fieldInfo)
-		XCTAssertEqual(alert.fieldInfo?.placeholder, "Name")
-		XCTAssertEqual(alert.buttons.count, 2)
+		#expect(alert.fieldInfo != nil)
+		#expect(alert.fieldInfo?.placeholder == "Name")
+		#expect(alert.buttons.count == 2)
 	}
 }

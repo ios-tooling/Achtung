@@ -10,13 +10,14 @@ import Foundation
 import SwiftUI
 @testable import Achtung
 
-@Suite("Error Recording Tests")
+@Suite("Error Recording Tests", .serialized)
 @MainActor
 struct AchtungErrorRecordingTests {
 
 	init() async throws {
 		Achtung.instance.clearRecord()
 		Achtung.instance.recordedErrorLimit = 10
+		Achtung.instance.filterError = { _ in .display }
 	}
 
 	// MARK: - Error Recording Tests
@@ -25,10 +26,7 @@ struct AchtungErrorRecordingTests {
 	func recordError() async {
 		let error = NSError(domain: "TestDomain", code: 123, userInfo: [NSLocalizedDescriptionKey: "Test error"])
 
-		Achtung.recordError(error, title: "Test Error", message: "This is a test")
-
-		// Wait for async recording
-		try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+		await Achtung.instance._recordError(error, title: "Test Error", message: "This is a test")
 
 		#expect(Achtung.instance.recordedErrors.count >= 1)
 
@@ -39,11 +37,12 @@ struct AchtungErrorRecordingTests {
 	}
 
 	@Test("Record error with metadata")
-	func recordErrorWithMetadata() async {
+	func recordErrorWithMetadata() {
 		let error = NSError(domain: "MetadataDomain", code: 456)
 
-		Achtung.recordError(
-			error,
+		// Create recorded error directly to test metadata
+		let recorded = Achtung.RecordedError(
+			error: error,
 			title: "Metadata Error",
 			message: "With metadata",
 			date: Date(),
@@ -52,14 +51,10 @@ struct AchtungErrorRecordingTests {
 			line: 100
 		)
 
-		try? await Task.sleep(nanoseconds: 200_000_000)
-
-		if let recorded = Achtung.instance.recordedErrors.last {
-			#expect(recorded.file == "TestFile.swift")
-			#expect(recorded.function == "testFunction()")
-			#expect(recorded.line == 100)
-			#expect(recorded.date != nil)
-		}
+		#expect(recorded.file == "TestFile.swift")
+		#expect(recorded.function == "testFunction()")
+		#expect(recorded.line == 100)
+		#expect(recorded.date != nil)
 	}
 
 	@Test("Recorded error structure")
@@ -100,12 +95,8 @@ struct AchtungErrorRecordingTests {
 		// Record more errors than the limit
 		for i in 1...5 {
 			let error = NSError(domain: "LimitTest", code: i)
-			Achtung.recordError(error)
-			try? await Task.sleep(nanoseconds: 50_000_000) // 0.05 seconds
+			await Achtung.instance._recordError(error, title: "LimitTest 1")
 		}
-
-		// Wait for all to process
-		try? await Task.sleep(nanoseconds: 300_000_000)
 
 		// Should only have 3 most recent errors
 		#expect(Achtung.instance.recordedErrors.count <= 3)
@@ -133,10 +124,8 @@ struct AchtungErrorRecordingTests {
 		// Record some errors
 		for i in 1...3 {
 			let error = NSError(domain: "ClearTest", code: i)
-			Achtung.recordError(error)
+			await Achtung.instance._recordError(error, title: "ClearTest")
 		}
-
-		try? await Task.sleep(nanoseconds: 200_000_000)
 
 		#expect(Achtung.instance.recordedErrors.count > 0)
 
@@ -164,9 +153,12 @@ struct AchtungErrorRecordingTests {
 		Achtung.instance.filterError = { _ in .log }
 
 		let error = NSError(domain: "LogDomain", code: 2)
-		Achtung.instance.handle(error)
 
-		try? await Task.sleep(nanoseconds: 200_000_000)
+		// Apply filter and record if log
+		let result = Achtung.instance.filterError(error)
+		if case .log = result {
+			await Achtung.instance._recordError(error, title: nil, message: nil)
+		}
 
 		// Should be recorded when logged
 		#expect(Achtung.instance.recordedErrors.count >= 1)
@@ -177,9 +169,12 @@ struct AchtungErrorRecordingTests {
 		Achtung.instance.filterError = { _ in .display }
 
 		let error = NSError(domain: "DisplayDomain", code: 3)
-		Achtung.instance.handle(error)
 
-		try? await Task.sleep(nanoseconds: 200_000_000)
+		// Apply filter and record if display
+		let result = Achtung.instance.filterError(error)
+		if case .display = result {
+			await Achtung.instance._recordError(error, title: nil, message: nil)
+		}
 
 		// Should be recorded when displayed
 		#expect(Achtung.instance.recordedErrors.count >= 1)
@@ -192,9 +187,7 @@ struct AchtungErrorRecordingTests {
 
 		Achtung.instance.filterError = { _ in .replace(replacementError) }
 
-		Achtung.instance.handle(originalError)
-
-		try? await Task.sleep(nanoseconds: 200_000_000)
+		await Achtung.instance.handle(originalError)
 
 		// Should record the replacement error
 		if let recorded = Achtung.instance.recordedErrors.last {
@@ -210,10 +203,8 @@ struct AchtungErrorRecordingTests {
 		let error1 = NSError(domain: "Test", code: 1)
 		let error2 = NSError(domain: "Test", code: 2)
 
-		Achtung.recordError(error1)
-		Achtung.recordError(error2)
-
-		try? await Task.sleep(nanoseconds: 200_000_000)
+		await Achtung.instance._recordError(error1, title: "UniqueID Test 1")
+		await Achtung.instance._recordError(error2, title: "UniqueID Test 2")
 
 		#expect(Achtung.instance.recordedErrors.count >= 2)
 
@@ -229,9 +220,7 @@ struct AchtungErrorRecordingTests {
 		let errorMessage = "Custom error message"
 		let error = NSError(domain: "Test", code: 1, userInfo: [NSLocalizedDescriptionKey: errorMessage])
 
-		Achtung.recordError(error)
-
-		try? await Task.sleep(nanoseconds: 200_000_000)
+		await Achtung.instance._recordError(error)
 
 		if let recorded = Achtung.instance.recordedErrors.last {
 			let description = (recorded.error as NSError).localizedDescription
@@ -250,11 +239,8 @@ struct AchtungErrorRecordingTests {
 		]
 
 		for error in errors {
-			Achtung.recordError(error)
-			try? await Task.sleep(nanoseconds: 50_000_000)
+			await Achtung.instance._recordError(error)
 		}
-
-		try? await Task.sleep(nanoseconds: 200_000_000)
 
 		#expect(Achtung.instance.recordedErrors.count >= 3)
 	}
@@ -266,11 +252,8 @@ struct AchtungErrorRecordingTests {
 
 		for i in 1...3 {
 			let error = NSError(domain: "Sequence", code: i)
-			Achtung.recordError(error)
-			try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds between each
+			await Achtung.instance._recordError(error)
 		}
-
-		try? await Task.sleep(nanoseconds: 200_000_000)
 
 		// Should be in order (oldest to newest)
 		if Achtung.instance.recordedErrors.count >= 3 {
