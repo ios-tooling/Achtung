@@ -77,6 +77,9 @@ import Combine
 			} else {
 				isSettingUp = true
 				Task {
+					if #available(iOS 16.0, *) {
+						await AchtungNotifications.instance.setup()
+					}
 					try await Task.sleep(nanoseconds: 500_000_000)
 					await MainActor.run {
 						self.add(toScene: nil)

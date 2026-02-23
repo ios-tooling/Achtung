@@ -15,6 +15,11 @@ public actor AchtungNotifications: NSObject {
 	
 	var isAuthorized = false
 	
+	public func setup() async {
+		let options = await UNUserNotificationCenter.current().notificationSettings()
+		isAuthorized = options.alertSetting == .enabled
+	}
+	
 	public func requestPermissions() async throws {
 		isAuthorized = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
 		UNUserNotificationCenter.current().delegate = self
