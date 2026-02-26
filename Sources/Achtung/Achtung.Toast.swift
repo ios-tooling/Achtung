@@ -53,6 +53,10 @@ public extension Achtung {
 		@MainActor public init<Leading: View, Accessory: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(id: id, title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, leadingView: AnyView(leading()), accessoryView: AnyView(accessory()), tapAction: tapAction)
 		}
+		
+		func isEqual(to toast: Toast) -> Bool {
+			toast.line == line && String(describing: toast.file) == String(describing: file) && String(describing: toast.function) == String(describing: function)
+		}
 
 		public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.id = id

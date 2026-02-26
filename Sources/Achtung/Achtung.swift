@@ -19,6 +19,8 @@ import Combine
 	var toasts: [Toast] = []
 	var isSettingUp = false
 	var nextToastTimer: Timer?
+	var lastToast: Toast?
+	var lastToastTime: Date?
 	public var errorDisplayLevel = ErrorLevel.standard
 	
 	
@@ -34,6 +36,7 @@ import Combine
 	@Published public var toastBackgroundColor = Color.black
 	@Published public var toastForegroundColor = Color.white
 	@Published public var toastBorderColor = Color.white.opacity(0.9)
+	public var duplicateToastTimeOut = 0.0
 	
 	public var filterError: (Error) -> ErrorFilterResult = { _ in .display }
 	

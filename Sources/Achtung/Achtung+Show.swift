@@ -16,6 +16,10 @@ extension Achtung {
 
 	/// Async version - shows a toast notification
 	@MainActor public func show(toast: Toast) async {
+		if let lastToast, lastToast.isEqual(to: toast), let lastToastTime, abs(lastToastTime.timeIntervalSinceNow) < duplicateToastTimeOut { return }
+		
+		lastToast = toast
+		lastToastTime = Date()
 		if #available(iOS 16.0, macOS 13, *) {
 			if toast.nativity == .native, await AchtungNotifications.instance.isAuthorized {
 				await AchtungNotifications.instance.show(toast: toast)
