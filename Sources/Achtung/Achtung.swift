@@ -25,28 +25,14 @@ import Combine
 	@Published var pendingAlerts: [Achtung.Alert] = []
 
 
-	public var errorDisplayLevel = ErrorLevel.standard
 	@Published public var configuration = Configuration()
-	
 	@Published public internal(set) var recordedErrors: [RecordedError] = []
-	public var recordedErrorLimit = 10
-	
-	@Published public var alertBackgroundColor = Color.black
-	@Published public var alertForegroundColor = Color.white
-	@Published public var alertBorderColor = Color.white.opacity(0.9)
-	
-	@Published public var toastBackgroundColor = Color.black
-	@Published public var toastForegroundColor = Color.white
-	@Published public var toastBorderColor = Color.white.opacity(0.9)
-	public var duplicateToastTimeOut = 0.0
-	
-	public var filterError: (Error) -> ErrorFilterResult = { _ in .display }
 	
 	/// Async version - handles an error with filtering
 	@MainActor public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) async {
 		var displayed = error
 
-		switch filterError(error) {
+		switch configuration.filterError(error) {
 		case .ignore: return
 		case .log:
 			await Self.recordError(error, title: title)
@@ -70,13 +56,16 @@ import Combine
 	
 	private init() { }
 	
+	public func load(configuration: Configuration) {
+		self.configuration = configuration
+	}
+	
 	#if os(macOS)
 		public func setup(level: ErrorLevel = .standard) {
 			errorDisplayLevel = level
 		}
 	#else
-		public func setup(in scene: UIWindowScene? = nil, level: ErrorLevel? = nil) {
-			if let level { errorDisplayLevel = level }
+		public func setup(in scene: UIWindowScene? = nil) {
 			if let scene = scene {
 				self.add(toScene: scene)
 			} else {

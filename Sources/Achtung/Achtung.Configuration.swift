@@ -11,6 +11,7 @@ extension Achtung {
 	public struct Configuration: Equatable {
 		public var errorDisplayLevel = ErrorLevel.standard
 		
+		public init() { }
 		
 		public internal(set) var recordedErrors: [RecordedError] = []
 		public var recordedErrorLimit = 10
@@ -40,4 +41,20 @@ extension Achtung {
 			return true
 		}
 	}
+}
+
+public extension Achtung.Configuration {
+	static let halloween: Achtung.Configuration = {
+		var config = Achtung.Configuration()
+
+		config.alertBackgroundColor = .orange
+		config.alertForegroundColor = .black
+		config.alertBorderColor = .black
+
+		config.toastBackgroundColor = .orange
+		config.toastForegroundColor = .black
+		config.toastBorderColor = .black
+		
+		return config
+	}()
 }

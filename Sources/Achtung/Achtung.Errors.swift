@@ -23,7 +23,7 @@ public extension Achtung {
 	@MainActor static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, localized: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) async {
 		guard let error else { return }
 
-		if level >= Achtung.instance.errorDisplayLevel {
+		if level >= Achtung.instance.configuration.errorDisplayLevel {
 			let toast = Toast(title ?? "An error occurred", localized: localized, message: nil, error: error, file: file, function: function, line: line, leading: leading, accessory: accessory)
 			await Achtung.instance.show(toast: toast)
 		}

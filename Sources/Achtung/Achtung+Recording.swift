@@ -37,7 +37,7 @@ public extension Achtung {
 	@MainActor func _recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
 		print("⛔️\(title ?? "") \(message ?? "") : \(error.decodingDescription ?? error.localizedDescription)")
 		recordedErrors.append(.init(error: error, title: title, message: message, date: date, file: file, function: function, line: line))
-		while recordedErrors.count > recordedErrorLimit {
+		while recordedErrors.count > configuration.recordedErrorLimit {
 			recordedErrors.removeFirst()
 		}
 	}

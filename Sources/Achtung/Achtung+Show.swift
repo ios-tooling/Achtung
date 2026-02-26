@@ -16,7 +16,7 @@ extension Achtung {
 
 	/// Async version - shows a toast notification
 	@MainActor public func show(toast: Toast) async {
-		if let lastToast, lastToast.isEqual(to: toast), let lastToastTime, abs(lastToastTime.timeIntervalSinceNow) < duplicateToastTimeOut { return }
+		if let lastToast, lastToast.isEqual(to: toast), let lastToastTime, abs(lastToastTime.timeIntervalSinceNow) < configuration.duplicateToastTimeOut { return }
 		
 		lastToast = toast
 		lastToastTime = Date()

@@ -45,7 +45,7 @@ import SwiftUI
 			}
 			.font(toast.titleFont)
 			.padding()
-			.foregroundColor(toast.foregroundColor ?? Achtung.instance.toastForegroundColor)
+			.foregroundColor(toast.foregroundColor ?? Achtung.instance.configuration.toastForegroundColor)
 			.background(backgroundView)
 			.multilineTextAlignment(.center)
 			.padding(4)
@@ -65,9 +65,9 @@ import SwiftUI
 	var backgroundView: some View {
 		ZStack() {
 			RoundedRectangle(cornerRadius: toast.cornerRadius)
-				.fill(toast.backgroundColor ?? Achtung.instance.toastBackgroundColor)
+				.fill(toast.backgroundColor ?? Achtung.instance.configuration.toastBackgroundColor)
 			RoundedRectangle(cornerRadius: toast.cornerRadius)
-				.stroke(toast.borderColor ?? Achtung.instance.toastBorderColor, lineWidth: toast.borderWidth)
+				.stroke(toast.borderColor ?? Achtung.instance.configuration.toastBorderColor, lineWidth: toast.borderWidth)
 		}
 	}
 	

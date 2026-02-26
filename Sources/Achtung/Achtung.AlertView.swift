@@ -11,9 +11,9 @@ import SwiftUI
 extension Achtung {
 	@MainActor struct AlertView: View {
 		let alert: Achtung.Alert
-		var foreground: Color { alert.foregroundColor ?? Achtung.instance.alertForegroundColor }
-		var borderColor: Color { alert.borderColor ?? Achtung.instance.alertBorderColor  }
-		var backgroundColor: Color { alert.backgroundColor ?? Achtung.instance.alertBackgroundColor  }
+		var foreground: Color { alert.foregroundColor ?? Achtung.instance.configuration.alertForegroundColor }
+		var borderColor: Color { alert.borderColor ?? Achtung.instance.configuration.alertBorderColor  }
+		var backgroundColor: Color { alert.backgroundColor ?? Achtung.instance.configuration.alertBackgroundColor  }
 		@State private var fieldText = ""
 
 		var radius: CGFloat = 8
