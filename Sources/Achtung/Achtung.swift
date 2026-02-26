@@ -98,6 +98,7 @@ import Combine
 			Task {
 				try await Task.sleep(nanoseconds: UInt64(500_000_000 * next.duration))
 				await MainActor.run {
+					self.currentToast = toasts.first
 					self.dismissCurrentToast()
 				}
 			}
@@ -117,6 +118,8 @@ import Combine
 			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideToastDuration, repeats: false) { _ in
 				Task { @MainActor [weak self] in self?.showNextToast() }
 			}
+		} else {
+			nextToastTimer = nil
 		}
 	}
 	
