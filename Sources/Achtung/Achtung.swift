@@ -21,11 +21,13 @@ import Combine
 	var nextToastTimer: Timer?
 	var lastToast: Toast?
 	var lastToastTime: Date?
-	public var errorDisplayLevel = ErrorLevel.standard
-	
-	
 	@Published var currentToast: Toast?
 	@Published var pendingAlerts: [Achtung.Alert] = []
+
+
+	public var errorDisplayLevel = ErrorLevel.standard
+	@Published public var configuration = Configuration()
+	
 	@Published public internal(set) var recordedErrors: [RecordedError] = []
 	public var recordedErrorLimit = 10
 	
