@@ -55,7 +55,7 @@ public extension Achtung {
 		
 		public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 			guard let hitView = super.hitTest(point, with: event) else { return nil }
-			if isEnabled { return hitView }
+			if !isEnabled { return nil }
 			if activeToastFrame.contains(point) { return hitView }
 			return rootViewController?.view == hitView ? nil : hitView
 		}
