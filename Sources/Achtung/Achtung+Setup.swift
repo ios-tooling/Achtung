@@ -52,9 +52,11 @@ public extension Achtung {
 	class HostWindow: UIWindow {
 		var isEnabled = false
 		var activeToastFrame = CGRect.zero
-		
+		var isAlertVisible = false
+
 		public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 			guard let hitView = super.hitTest(point, with: event) else { return nil }
+			if isEnabled, isAlertVisible { return hitView }
 			if !isEnabled { return nil }
 			if activeToastFrame.contains(point) { return hitView }
 			return rootViewController?.view == hitView ? nil : hitView

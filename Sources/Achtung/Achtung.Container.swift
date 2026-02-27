@@ -47,6 +47,9 @@ extension Achtung {
 						.zIndex(100)
 				}
 			}
+			.onChange(of: achtung.pendingAlerts) { alerts in
+				Achtung.instance.hostWindow?.isAlertVisible = !alerts.isEmpty
+			}
 		}
 	}
 }

@@ -51,12 +51,10 @@ import SwiftUI
 			.padding(4)
 			.background(
 				GeometryReader { geometry in
-					Color.clear
-						.onAppear {
-							#if os(iOS)
-								Achtung.instance.hostWindow?.activeToastFrame = geometry.frame(in: .global)
-							#endif
-						}
+					#if os(iOS)
+						Color.clear
+							.onAppear { Achtung.instance.hostWindow?.activeToastFrame = geometry.frame(in: .global) }
+					#endif
 				}
 			)
 		}

@@ -101,11 +101,10 @@ import Combine
 	}
 	
 	func dismissCurrentToast() {
+		#if os(iOS)
+			Achtung.instance.hostWindow?.activeToastFrame = .zero
+		#endif
 		if currentToast != nil {
-			#if os(iOS)
-				Achtung.instance.hostWindow?.activeToastFrame = .zero
-			#endif
-			
 			withAnimation(.easeIn(duration: Achtung.hideToastDuration)) {
 				currentToast = nil
 			}
