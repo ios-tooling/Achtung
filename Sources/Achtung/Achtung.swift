@@ -19,34 +19,35 @@ import Combine
 	var toasts: [Toast] = []
 	var isSettingUp = false
 	var nextToastTimer: Timer?
+	var dismissToastTimer: Timer?
 	var lastToast: Toast?
 	var lastToastTime: Date?
 	@Published var currentToast: Toast?
 	@Published var pendingAlerts: [Achtung.Alert] = []
-
-
+	
+	
 	@Published public var configuration = Configuration()
 	@Published public internal(set) var recordedErrors: [RecordedError] = []
 	
 	/// Async version - handles an error with filtering
 	@MainActor public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) async {
 		var displayed = error
-
+		
 		switch configuration.filterError(error) {
 		case .ignore: return
 		case .log:
 			await Self.recordError(error, title: title)
 			print("Achtung recorded: \(error)")
 			return
-
+			
 		case .display: break
 		case .replace(let err): displayed = err
 		}
-
+		
 		await Self.recordError(displayed, title: title)
 		await Self.show(displayed, level: level ?? .testing, title: title)
 	}
-
+	
 	/// Non-async wrapper
 	public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) {
 		Task { @MainActor in
@@ -60,60 +61,63 @@ import Combine
 		self.configuration = configuration
 	}
 	
-	#if os(macOS)
-		public func setup(level: ErrorLevel = .standard) {
-			errorDisplayLevel = level
-		}
-	#else
-		public func setup(in scene: UIWindowScene? = nil) {
-			if let scene = scene {
-				self.add(toScene: scene)
-			} else {
-				isSettingUp = true
-				Task {
-					if #available(iOS 16.0, *) {
-						await AchtungNotifications.instance.setup()
-					}
-					try await Task.sleep(nanoseconds: 500_000_000)
-					await MainActor.run {
-						self.add(toScene: nil)
-						self.isSettingUp = false
-					}
-				}
-			}
-		}
-	#endif
-	
-	func showNextToast() {
-		if currentToast == nil, let next = toasts.first {
-			withAnimation(.easeOut(duration: Achtung.showToastDuration)) {
-				currentToast = next
-			}
+#if os(macOS)
+	public func setup(level: ErrorLevel = .standard) {
+		errorDisplayLevel = level
+	}
+#else
+	public func setup(in scene: UIWindowScene? = nil) {
+		if let scene = scene {
+			self.add(toScene: scene)
+		} else {
+			isSettingUp = true
 			Task {
-				try await Task.sleep(nanoseconds: UInt64(500_000_000 * next.duration))
+				if #available(iOS 16.0, *) {
+					await AchtungNotifications.instance.setup()
+				}
+				try await Task.sleep(nanoseconds: 500_000_000)
 				await MainActor.run {
-					self.currentToast = toasts.first
-					self.dismissCurrentToast()
+					self.add(toScene: nil)
+					self.isSettingUp = false
 				}
 			}
-			toasts.removeFirst()
 		}
 	}
+#endif
 	
-	func dismissCurrentToast() {
-		#if os(iOS)
-			Achtung.instance.hostWindow?.activeToastFrame = .zero
-		#endif
-		if currentToast != nil {
-			withAnimation(.easeIn(duration: Achtung.hideToastDuration)) {
-				currentToast = nil
+	func showNextToast() {
+		if let next = toasts.first {
+			withAnimation(.easeOut(duration: Achtung.showToastDuration)) {
+				self.currentToast = next
 			}
-			nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideToastDuration, repeats: false) { _ in
-				Task { @MainActor [weak self] in self?.showNextToast() }
+			
+			dismissToastTimer = Timer.scheduledTimer(withTimeInterval: next.duration, repeats: false) { _ in
+				Task { @MainActor [weak self] in
+					self?.dismissToast(next)
+				}
 			}
 		} else {
 			nextToastTimer = nil
 		}
+	}
+	
+	func dismissToast(_ toast: Toast?) {
+		if toast?.isEqual(to: currentToast) == true { dismissToastTimer?.invalidate() }
+		if let toast, let index = toasts.firstIndex(where: { $0.isEqual(to: toast) }) {
+			toasts.remove(at: index)
+		}
+		
+		withAnimation(.easeIn(duration: Achtung.hideToastDuration)) {
+			currentToast = nil
+		}
+		
+		nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideToastDuration, repeats: false) { _ in
+			Task { @MainActor [weak self] in self?.showNextToast() }
+		}
+	}
+	
+	func dismissCurrentToast() {
+		if let currentToast { dismissToast(currentToast) }
 	}
 	
 }

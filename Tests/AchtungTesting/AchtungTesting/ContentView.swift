@@ -15,10 +15,6 @@ struct ContentView: View {
 	var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Achtung Playground")
-                    .font(.title2)
-                    .bold()
-
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Toasts")
                         .font(.headline)
@@ -27,9 +23,13 @@ struct ContentView: View {
                         showToast(.init("Quick toast"))
                     }
 
-                    Button("Toast: Title + Message") {
-                        showToast(.init("Saved", message: "Your changes are now synced."))
-                    }
+						 Button("Toast: Title + Message") {
+							  showToast(.init("Saved", message: "Your changes are now synced."))
+						 }
+
+						 Button("Toast: Title + Sharing") {
+							  showToast(.init("I'm going to share this toast now", sharingTitle: "Share"))
+						 }
 
                     Button("Toast: Error") {
                         let error = NSError(
@@ -43,9 +43,9 @@ struct ContentView: View {
                     Button("Toast: Custom Colors") {
                         showToast(.init(
                             "Custom Colors",
-                            foreground: .white,
-                            border: .orange,
-                            background: .black
+                            foreground: .yellow,
+                            border: .red,
+                            background: .blue
                         ))
                     }
 

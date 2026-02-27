@@ -68,9 +68,6 @@ extension Achtung {
 		} else {
 			pendingAlerts.append(alert)
 		}
-		#if os(iOS)
-			hostWindow?.isEnabled = !pendingAlerts.isEmpty
-		#endif
 	}
 
 	/// Non-async wrapper for instance method
@@ -135,9 +132,6 @@ extension Achtung {
 		if let index = self.pendingAlerts.firstIndex(of: pending) {
 			withAnimation(.linear(duration: Achtung.hideAlertDuration)) {
 				self.pendingAlerts.remove(at: index)
-				#if os(iOS)
-					hostWindow?.isEnabled = !pendingAlerts.isEmpty
-				#endif
 				return
 			}
 		}

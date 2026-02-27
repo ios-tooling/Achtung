@@ -31,7 +31,7 @@ import SwiftUI
 					if let sharingTitle = toast.sharingTitle {
 						if #available(iOS 15.0, *) {
 							Button(sharingTitle, systemImage: "square.and.arrow.up") {
-								Achtung.instance.dismissCurrentToast()
+								Achtung.instance.dismissToast(toast)
 								toast.share()
 							}
 							.buttonStyle(.bordered)
@@ -50,12 +50,7 @@ import SwiftUI
 			.multilineTextAlignment(.center)
 			.padding(4)
 			.background(
-				GeometryReader { geometry in
-					#if os(iOS)
-						Color.clear
-							.onAppear { Achtung.instance.hostWindow?.activeToastFrame = geometry.frame(in: .global) }
-					#endif
-				}
+				Color.clear
 			)
 		}
 	}

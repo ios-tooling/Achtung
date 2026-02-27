@@ -50,7 +50,7 @@ public extension Achtung {
 	}
 
 	class HostWindow: UIWindow {
-		var isEnabled = false
+		var isEnabled: Bool { isAlertVisible || activeToastFrame.height > 0 }
 		var activeToastFrame = CGRect.zero
 		var isAlertVisible = false
 
