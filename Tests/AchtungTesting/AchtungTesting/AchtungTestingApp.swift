@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import Achtung
 
 @main
 struct AchtungTestingApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+	init() {
+		Achtung.instance.setup()
+		
+	}
+	
+	var body: some Scene {
+		WindowGroup {
+			ContentView()
+		}
+	}
 }
