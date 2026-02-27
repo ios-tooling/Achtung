@@ -17,7 +17,7 @@ public extension Achtung {
 	static nonisolated let showAlertDuration: TimeInterval = 0.2
 	static nonisolated let hideAlertDuration: TimeInterval = 0.2
 
-	struct Toast {
+	struct Toast: @unchecked Sendable {
 		public let id: String
 		public var title: String?
 		public var localizedTitle: LocalizedStringKey?
