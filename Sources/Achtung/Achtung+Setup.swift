@@ -66,8 +66,6 @@ public extension Achtung {
 #else
 @available(macOS 10.15, iOS 13.0, *)
 public extension Achtung {
-	func setup() { }
-	var isSetup: Bool { false }
 }
 #endif
 #endif

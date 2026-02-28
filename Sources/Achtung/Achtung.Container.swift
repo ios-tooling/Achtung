@@ -48,7 +48,9 @@ extension Achtung {
 				}
 			}
 			.onChange(of: achtung.pendingAlerts) { alerts in
-				Achtung.instance.hostWindow?.isAlertVisible = !alerts.isEmpty
+				#if os(iOS)
+					Achtung.instance.hostWindow?.isAlertVisible = !alerts.isEmpty
+				#endif
 			}
 		}
 	}

@@ -45,7 +45,7 @@ import Combine
 		}
 		
 		await Self.recordError(displayed, title: title)
-		await Self.show(displayed, level: level ?? .testing, title: title)
+		Self.show(displayed, level: level ?? .testing, title: title)
 	}
 	
 	/// Non-async wrapper
@@ -62,9 +62,8 @@ import Combine
 	}
 	
 #if os(macOS)
-	public func setup(level: ErrorLevel = .standard) {
-		errorDisplayLevel = level
-	}
+	public func setup() { }
+	var isSetup: Bool { true }
 #else
 	public func setup(in scene: UIWindowScene? = nil) {
 		if let scene = scene {
