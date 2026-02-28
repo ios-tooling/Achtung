@@ -18,7 +18,6 @@ extension Achtung {
 
 		var body: some View {
 			ToastBodyView(toast: toast)
-				.frame(maxHeight: .infinity, alignment: .top)
 				.transition(.move(edge: .top))
 				.zIndex(100)
 				.offset(y: dragOffset)
@@ -37,11 +36,13 @@ extension Achtung {
 							.onAppear {
 								#if os(iOS)
 									baseFrame = geometry.frame(in: .global)
+									print("Setting toast frame to \(baseFrame)")
 									Achtung.instance.hostWindow?.activeToastFrame = baseFrame
 								#endif
 							}
 					}
 				)
+				.frame(maxHeight: .infinity, alignment: .top)
 				.onDisappear {
 					#if os(iOS)
 						Achtung.instance.hostWindow?.activeToastFrame = .zero
@@ -50,7 +51,8 @@ extension Achtung {
 				.simultaneousGesture(
 					DragGesture(minimumDistance: 20, coordinateSpace: .global)
 						.onChanged { value in
-							dragOffset = min(0, value.translation.height)
+							Achtung.instance.clearDismissTimer()
+							dragOffset = value.translation.height//min(40, value.translation.height)
 						}
 						.onEnded { value in
 							let translation = value.translation.height

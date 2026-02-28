@@ -10,8 +10,8 @@ import SwiftUI
 public enum ToastNativity: String, Sendable { case custom, ifPossible, native }
 
 public extension Achtung {
-	static nonisolated let onScreenTime: TimeInterval = 8
-	static nonisolated let longOnScreenTime: TimeInterval = 12
+	static nonisolated let onScreenTime: TimeInterval = 5
+	static nonisolated let longOnScreenTime: TimeInterval = 10
 	static nonisolated let showToastDuration: TimeInterval = 0.5
 	static nonisolated let hideToastDuration: TimeInterval = 0.4
 	static nonisolated let showAlertDuration: TimeInterval = 0.2

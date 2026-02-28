@@ -85,6 +85,11 @@ import Combine
 	}
 #endif
 	
+	func clearDismissTimer() {
+		dismissToastTimer?.invalidate()
+		dismissToastTimer = nil
+	}
+	
 	func showNextToast() {
 		if let next = toasts.first {
 			withAnimation(.easeOut(duration: Achtung.showToastDuration)) {
@@ -102,7 +107,7 @@ import Combine
 	}
 	
 	func dismissToast(_ toast: Toast?) {
-		if toast?.isEqual(to: currentToast) == true { dismissToastTimer?.invalidate() }
+		if toast?.isEqual(to: currentToast) == true { clearDismissTimer() }
 		if let toast, let index = toasts.firstIndex(where: { $0.isEqual(to: toast) }) {
 			toasts.remove(at: index)
 		}
