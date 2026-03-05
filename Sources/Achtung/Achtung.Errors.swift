@@ -123,7 +123,13 @@ public extension Achtung {
 }
 #else
 public extension Achtung {
-	static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) async {
+		guard let error else { return }
+
+		print("⚠️ \(title ?? "") (\(fileDescription(file, function, line))): \(error)")
+	}
+
+	@MainActor static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
 		guard let error else { return }
 
 		print("⚠️ \(title ?? "") (\(fileDescription(file, function, line))): \(error)")

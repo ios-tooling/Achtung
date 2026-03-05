@@ -45,7 +45,7 @@ import Combine
 		}
 		
 		await Self.recordError(displayed, title: title)
-		Self.show(displayed, level: level ?? .testing, title: title)
+		await Self.show(displayed, level: level ?? .testing, title: title)
 	}
 	
 	/// Non-async wrapper
