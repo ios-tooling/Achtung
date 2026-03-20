@@ -30,7 +30,7 @@ import Combine
 	@Published public internal(set) var recordedErrors: [RecordedError] = []
 	
 	/// Async version - handles an error with filtering
-	@MainActor public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) async {
+	@MainActor public func handle(_ error: Error, level: ErrorLevel? = nil, title: String? = nil) async {
 		var displayed = error
 		
 		switch configuration.filterError(error) {
@@ -49,12 +49,22 @@ import Combine
 	}
 	
 	/// Non-async wrapper
-	public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringKey? = nil) {
+	public func handle(_ error: Error, level: ErrorLevel? = nil, title: String? = nil) {
 		Task { @MainActor in
 			await handle(error, level: level, title: title)
 		}
 	}
-	
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	@MainActor public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringResource) async {
+		await handle(error, level: level, title: String(localized: title))
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	public func handle(_ error: Error, level: ErrorLevel? = nil, title: LocalizedStringResource) {
+		handle(error, level: level, title: String(localized: title))
+	}
+
 	private init() { }
 	
 	public func load(configuration: Configuration) {

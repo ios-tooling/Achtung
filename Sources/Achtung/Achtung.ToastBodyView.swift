@@ -18,7 +18,9 @@ import SwiftUI
 				}
 				VStack(alignment: .trailing) {
 					VStack(alignment: .leading) {
-						if let title = toast.title {
+						if let localizedTitle = toast.localizedTitle {
+							Text(localizedTitle)
+						} else if let title = toast.title {
 							Text(title)
 						}
 						if let message = toast.message {

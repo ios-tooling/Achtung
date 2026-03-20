@@ -20,6 +20,9 @@ extension Achtung {
 		
 		lastToast = toast
 		lastToastTime = Date()
+		if let error = toast.error {
+			await _recordError(error, title: toast.title)
+		}
 		if #available(iOS 16.0, macOS 13, *) {
 			if toast.nativity == .native, await AchtungNotifications.instance.isAuthorized {
 				await AchtungNotifications.instance.show(toast: toast)

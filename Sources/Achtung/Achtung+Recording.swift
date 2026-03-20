@@ -13,7 +13,7 @@ public extension Achtung {
 	struct RecordedError: Identifiable {
 		public let id = UUID()
 		public let error: Error
-		public let title: LocalizedStringKey?
+		public let title: String?
 		public let message: String?
 		public var date: Date?
 		public var file: String?
@@ -22,20 +22,20 @@ public extension Achtung {
 	}
 	
 	/// Async version - records an error
-	@MainActor static func recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
+	@MainActor static func recordError(_ error: Error, title: String? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
 		await Achtung.instance._recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
 	}
 
 	/// Non-async wrapper
-	static func recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
+	static func recordError(_ error: Error, title: String? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
 		Task { @MainActor in
 			await recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
 		}
 	}
 
 	/// Async version - internal recording implementation
-	@MainActor func _recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
-		print("⛔️\(title ?? "") \(message ?? "") : \(error.decodingDescription ?? error.localizedDescription)")
+	@MainActor func _recordError(_ error: Error, title: String? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
+		print("⛔️ \(title ?? "") \(message ?? "") : \(error.decodingDescription ?? error.localizedDescription)")
 		recordedErrors.append(.init(error: error, title: title, message: message, date: date, file: file, function: function, line: line))
 		while recordedErrors.count > configuration.recordedErrorLimit {
 			recordedErrors.removeFirst()
@@ -43,12 +43,22 @@ public extension Achtung {
 	}
 
 	/// Non-async wrapper for internal method
-	func _recordError(_ error: Error, title: LocalizedStringKey? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
+	func _recordError(_ error: Error, title: String? = nil, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
 		Task { @MainActor in
 			await _recordError(error, title: title, message: message, date: date, file: file, function: function, line: line)
 		}
 	}
 	
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	@MainActor static func recordError(_ error: Error, title: LocalizedStringResource, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) async {
+		await recordError(error, title: String(localized: title), message: message, date: date, file: file, function: function, line: line)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	static func recordError(_ error: Error, title: LocalizedStringResource, message: String? = nil, date: Date = Date(), file: String = #file, function: String = #function, line: Int = #line) {
+		recordError(error, title: String(localized: title), message: message, date: date, file: file, function: function, line: line)
+	}
+
 	func clearRecord() {
 		recordedErrors = []
 	}

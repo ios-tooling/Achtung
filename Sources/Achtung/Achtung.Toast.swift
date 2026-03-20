@@ -20,7 +20,7 @@ public extension Achtung {
 	struct Toast: @unchecked Sendable {
 		public let id: String
 		public var title: String?
-		public var localizedTitle: LocalizedStringKey?
+		public var localizedTitle: String?
 		public var message: String?
 		public var nativity: ToastNativity
 		public var error: Error?
@@ -42,15 +42,15 @@ public extension Achtung {
 		public var function: StaticString
 		public var line: UInt
 		
-		@MainActor public init<Leading: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@MainActor () async -> Void)? = nil) {
+		@MainActor public init<Leading: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: String? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(id: id, title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, leading: { AnyView(leadingView()) }, accessory: { EmptyView() }, tapAction: tapAction)
 		}
-		
-		@MainActor public init<Accessory: View>(id: String = UUID().uuidString, _ title: String? = nil,_ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping  () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
+
+		@MainActor public init<Accessory: View>(id: String = UUID().uuidString, _ title: String? = nil,_ nativity: ToastNativity = .ifPossible, localized: String? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping  () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(id: id, title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, leading: { EmptyView() }, accessory: { AnyView(accessory()) }, tapAction: tapAction)
 		}
-		
-		@MainActor public init<Leading: View, Accessory: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
+
+		@MainActor public init<Leading: View, Accessory: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: String? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.init(id: id, title, nativity, localized: localized, message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, leadingView: AnyView(leading()), accessoryView: AnyView(accessory()), tapAction: tapAction)
 		}
 		
@@ -58,7 +58,7 @@ public extension Achtung {
 			toast?.line == line && String(describing: toast?.file ?? "") == String(describing: file) && String(describing: toast?.function ?? "") == String(describing: function)
 		}
 
-		public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tapAction: (@MainActor () async -> Void)? = nil) {
+		public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: String? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tapAction: (@MainActor () async -> Void)? = nil) {
 			self.id = id
 			self.title = title
 			self.localizedTitle = localized
@@ -79,7 +79,7 @@ public extension Achtung {
 			self.line = line
 		}
 
-		@MainActor public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringKey? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, leadingView: AnyView?, accessoryView: AnyView?, tapAction: (@MainActor () async -> Void)? = nil) {
+		@MainActor public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: String? = nil, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, leadingView: AnyView?, accessoryView: AnyView?, tapAction: (@MainActor () async -> Void)? = nil) {
 			
 			self.id = id
 			self.title = title
@@ -99,6 +99,26 @@ public extension Achtung {
 			self.file = file
 			self.function = function
 			self.line = line
+		}
+
+		@available(macOS 13, iOS 16, watchOS 9, *)
+		public init(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringResource, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(id: id, title, nativity, localized: String(localized: localized), message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, tapAction: tapAction)
+		}
+
+		@available(macOS 13, iOS 16, watchOS 9, *)
+		@MainActor public init<Leading: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringResource, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leadingView: @escaping () -> Leading, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(id: id, title, nativity, localized: String(localized: localized), message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, leadingView: leadingView, tapAction: tapAction)
+		}
+
+		@available(macOS 13, iOS 16, watchOS 9, *)
+		@MainActor public init<Accessory: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringResource, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(id: id, title, nativity, localized: String(localized: localized), message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, accessory: accessory, tapAction: tapAction)
+		}
+
+		@available(macOS 13, iOS 16, watchOS 9, *)
+		@MainActor public init<Leading: View, Accessory: View>(id: String = UUID().uuidString, _ title: String? = nil, _ nativity: ToastNativity = .ifPossible, localized: LocalizedStringResource, message: String? = nil, error: Error? = nil, duration: TimeInterval? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, sharingTitle: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory, tapAction: (@MainActor () async -> Void)? = nil) {
+			self.init(id: id, title, nativity, localized: String(localized: localized), message: message, error: error, duration: duration, foreground: foreground, border: border, background: background, sharingTitle: sharingTitle, file: file, function: function, line: line, leading: leading, accessory: accessory, tapAction: tapAction)
 		}
 
 		@MainActor static let sample = Achtung.Toast("Look at me!")

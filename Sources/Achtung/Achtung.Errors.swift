@@ -20,7 +20,7 @@ public extension Achtung {
 	// MARK: - Error Display Methods
 
 	/// Async version - shows an error with leading and accessory views
-	@MainActor static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, localized: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) async {
+	@MainActor static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, localized: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) async {
 		guard let error else { return }
 
 		if level >= Achtung.instance.configuration.errorDisplayLevel {
@@ -31,31 +31,31 @@ public extension Achtung {
 	}
 
 	/// Non-async wrapper
-	static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, localized: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) {
+	static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, localized: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) {
 		Task { @MainActor in
 			await show(error, level: level, title: title, localized: localized, file: file, function: function, line: line, leading: leading, accessory: accessory)
 		}
 	}
 
 	/// Async version - shows error with accessory view
-	@MainActor static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory) async {
+	@MainActor static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory) async {
 		await show(error, level: level, file: file, function: function, line: line, leading: { EmptyView() }, accessory: accessory)
 	}
 
 	/// Non-async wrapper
-	static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory) {
+	static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory) {
 		Task { @MainActor in
 			await show(error, level: level, title: title, file: file, function: function, line: line, accessory: accessory)
 		}
 	}
 
 	/// Async version - shows error with leading view
-	@MainActor static func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading) async {
+	@MainActor static func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading) async {
 		await show(error, level: level, file: file, function: function, line: line, leading: leading, accessory: { EmptyView() })
 	}
 
 	/// Non-async wrapper
-	static func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading) {
+	static func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading) {
 		Task { @MainActor in
 			await show(error, level: level, title: title, file: file, function: function, line: line, leading: leading)
 		}
@@ -73,13 +73,13 @@ public extension Achtung {
 		}
 	}
 
-	/// Async version - shows error with LocalizedStringKey title
-	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) async {
+	/// Async version - shows error with String title
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) async {
 		await show(error, level: level, file: file, function: function, line: line, leading: { EmptyView() }, accessory: { EmptyView() })
 	}
 
 	/// Non-async wrapper
-	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
 		Task { @MainActor in
 			await show(error, level: level, title: title, file: file, function: function, line: line)
 		}
@@ -88,7 +88,7 @@ public extension Achtung {
 	// MARK: - Do Method (Error Handling Wrapper)
 
 	/// Async do - handles synchronous throwing blocks
-	@MainActor static func `do`(level: ErrorLevel = .testing, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: () throws -> Void) async {
+	@MainActor static func `do`(level: ErrorLevel = .testing, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: () throws -> Void) async {
 		do {
 			try block()
 		} catch {
@@ -98,14 +98,14 @@ public extension Achtung {
 	}
 
 	/// Non-async wrapper - handles synchronous throwing blocks
-	nonisolated static func `do`(level: ErrorLevel = .testing, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () throws -> Void) {
+	nonisolated static func `do`(level: ErrorLevel = .testing, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () throws -> Void) {
 		Task { @MainActor in
 			await `do`(level: level, title: title, file: file, function: function, line: line, block)
 		}
 	}
 
 	/// Async do - handles asynchronous throwing blocks
-	nonisolated static func `do`(level: ErrorLevel = .testing, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () async throws -> Void) async {
+	nonisolated static func `do`(level: ErrorLevel = .testing, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () async throws -> Void) async {
 		do {
 			try await block()
 		} catch {
@@ -115,21 +115,83 @@ public extension Achtung {
 	}
 
 	/// Non-async wrapper - handles asynchronous throwing blocks
-	nonisolated static func `do`(level: ErrorLevel = .testing, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () async throws -> Void) {
+	nonisolated static func `do`(level: ErrorLevel = .testing, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () async throws -> Void) {
 		Task { @MainActor in
 			await `do`(level: level, title: title, file: file, function: function, line: line, block)
 		}
 	}
+
+	// MARK: - LocalizedStringResource Overloads
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	@MainActor static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) async {
+		await show(error, level: level, title: String(localized: title), localized: nil, file: file, function: function, line: line, leading: leading, accessory: accessory)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	static func show<Accessory: View, Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading, @ViewBuilder accessory: @escaping () -> Accessory) {
+		show(error, level: level, title: String(localized: title), localized: nil, file: file, function: function, line: line, leading: leading, accessory: accessory)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	@MainActor static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory) async {
+		await show(error, level: level, title: String(localized: title), file: file, function: function, line: line, accessory: accessory)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	static func show<Accessory: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder accessory: @escaping () -> Accessory) {
+		show(error, level: level, title: String(localized: title), file: file, function: function, line: line, accessory: accessory)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	@MainActor static func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading) async {
+		await show(error, level: level, title: String(localized: title), file: file, function: function, line: line, leading: leading)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	static func show<Leading: View>(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, @ViewBuilder leading: @escaping () -> Leading) {
+		show(error, level: level, title: String(localized: title), file: file, function: function, line: line, leading: leading)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) async {
+		await show(error, level: level, title: String(localized: title), file: file, function: function, line: line)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
+		show(error, level: level, title: String(localized: title), file: file, function: function, line: line)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	@MainActor static func `do`(level: ErrorLevel = .testing, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: () throws -> Void) async {
+		await `do`(level: level, title: String(localized: title), file: file, function: function, line: line, block)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	nonisolated static func `do`(level: ErrorLevel = .testing, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () throws -> Void) {
+		`do`(level: level, title: String(localized: title), file: file, function: function, line: line, block)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	nonisolated static func `do`(level: ErrorLevel = .testing, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () async throws -> Void) async {
+		await `do`(level: level, title: String(localized: title), file: file, function: function, line: line, block)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	nonisolated static func `do`(level: ErrorLevel = .testing, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, _ block: @escaping () async throws -> Void) {
+		`do`(level: level, title: String(localized: title), file: file, function: function, line: line, block)
+	}
 }
 #else
 public extension Achtung {
-	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) async {
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) async {
 		guard let error else { return }
 
 		print("⚠️ \(title ?? "") (\(fileDescription(file, function, line))): \(error)")
 	}
 
-	@MainActor static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringKey? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
+	@MainActor static func show(_ error: Error?, level: ErrorLevel = .standard, title: String? = nil, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
 		guard let error else { return }
 
 		print("⚠️ \(title ?? "") (\(fileDescription(file, function, line))): \(error)")
@@ -151,6 +213,16 @@ public extension Achtung {
 				print("\(message ?? "") (\(fileDescription(file, function, line))): \(error)")
 			}
 		}
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	nonisolated static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) async {
+		await show(error, level: level, title: String(localized: title), file: file, function: function, line: line)
+	}
+
+	@available(macOS 13, iOS 16, watchOS 9, *)
+	@MainActor static func show(_ error: Error?, level: ErrorLevel = .standard, title: LocalizedStringResource, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
+		show(error, level: level, title: String(localized: title), file: file, function: function, line: line)
 	}
 }
 #endif
