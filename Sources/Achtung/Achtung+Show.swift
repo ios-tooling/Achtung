@@ -24,9 +24,8 @@ extension Achtung {
 			await _recordError(error, title: toast.title)
 		}
 		if #available(iOS 16.0, macOS 13, *) {
-			if toast.nativity == .native, await AchtungNotifications.instance.isAuthorized {
-				await AchtungNotifications.instance.show(toast: toast)
-				return
+			if toast.nativity == .native, AchtungNotifications.instance.isAuthorizedForCurrentState {
+				if await AchtungNotifications.instance.show(toast: toast) { return }
 			}
 		}
 

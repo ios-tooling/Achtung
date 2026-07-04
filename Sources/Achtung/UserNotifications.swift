@@ -6,14 +6,24 @@
 //
 
 import UserNotifications
-
+import SwiftUI
 
 @available(iOS 16.0, macOS 13, *)
-public actor AchtungNotifications: NSObject {
+@MainActor public class AchtungNotifications: NSObject {
 	public static let instance = AchtungNotifications()
 	var notificationTappedClosure: (@MainActor (String, String) async -> Void)?
 	
 	var isAuthorized = false
+	
+	@MainActor var isAuthorizedForCurrentState: Bool {
+		if isAuthorized { return true }
+		
+//		#if os(iOS)
+//			if UIApplication.shared.applicationState == .active { return true }
+//		#endif
+		
+		return false
+	}
 	
 	public func setup() async {
 		let options = await UNUserNotificationCenter.current().notificationSettings()
@@ -56,7 +66,7 @@ public actor AchtungNotifications: NSObject {
 		return id
 	}
 	
-	func show(toast: Achtung.Toast) {
+	func show(toast: Achtung.Toast) async -> Bool {
 		let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.01, repeats: false)
 		let content = UNMutableNotificationContent()
 		content.body = toast.message ?? ""
@@ -66,8 +76,14 @@ public actor AchtungNotifications: NSObject {
 			UNUserNotificationCenter.current().delegate = AchtungNotifications.instance
 		}
 		
-		let request = UNNotificationRequest(identifier: toast.id, content: content, trigger: trigger)
-		UNUserNotificationCenter.current().add(request)
+		do {
+			let request = UNNotificationRequest(identifier: toast.id, content: content, trigger: trigger)
+			try await UNUserNotificationCenter.current().add(request)
+			return true
+		} catch {
+			print("Failed to present toas: \(error)")
+			return false
+		}
 	}
 	
 	public func cancel(withID id: String) {
