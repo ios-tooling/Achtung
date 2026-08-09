@@ -110,32 +110,41 @@ import SwiftUI
 
 @available(iOS 16.0, macOS 13, *)
 extension AchtungNotifications: UNUserNotificationCenterDelegate {
-	public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping @Sendable (UNNotificationPresentationOptions) -> Void) {
-		let selector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:))
-		if !achtungNotificationIDs.contains(notification.request.identifier), let forwarded = forwardedDelegate, forwarded.responds(to: selector) {
-			forwarded.userNotificationCenter?(center, willPresent: notification, withCompletionHandler: completionHandler)
-			return
+	// These are nonisolated and hop to the main actor themselves. Implementing
+	// the async variants lets the ObjC concurrency bridge invoke UIKit's
+	// internal completion on a cooperative-pool thread, which crashes
+	// ("Call must be made on main thread") when a notification tap
+	// foregrounds the app.
+	nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping @Sendable (UNNotificationPresentationOptions) -> Void) {
+		Task { @MainActor in
+			let selector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:))
+			if !self.achtungNotificationIDs.contains(notification.request.identifier), let forwarded = self.forwardedDelegate, forwarded.responds(to: selector) {
+				forwarded.userNotificationCenter?(center, willPresent: notification, withCompletionHandler: completionHandler)
+				return
+			}
+			completionHandler([.banner, .badge, .sound])
 		}
-		completionHandler([.banner, .badge, .sound])
 	}
 
-	public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping @Sendable () -> Void) {
-		let id = response.notification.request.identifier
-		let selector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))
-		if !achtungNotificationIDs.contains(id), let forwarded = forwardedDelegate, forwarded.responds(to: selector) {
-			forwarded.userNotificationCenter?(center, didReceive: response, withCompletionHandler: completionHandler)
-			return
+	nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping @Sendable () -> Void) {
+		Task { @MainActor in
+			let id = response.notification.request.identifier
+			let selector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))
+			if !self.achtungNotificationIDs.contains(id), let forwarded = self.forwardedDelegate, forwarded.responds(to: selector) {
+				forwarded.userNotificationCenter?(center, didReceive: response, withCompletionHandler: completionHandler)
+				return
+			}
+			self.achtungNotificationIDs.remove(id)
+			completionHandler()
+			await self.notificationTappedClosure?(id, response.actionIdentifier)
 		}
-		achtungNotificationIDs.remove(id)
-		Task {
-			await notificationTappedClosure?(id, response.actionIdentifier)
-		}
-		completionHandler()
 	}
 
 	#if os(iOS) || os(macOS) || os(visionOS)
-	public func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
-		forwardedDelegate?.userNotificationCenter?(center, openSettingsFor: notification)
+	nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
+		Task { @MainActor in
+			self.forwardedDelegate?.userNotificationCenter?(center, openSettingsFor: notification)
+		}
 	}
 	#endif
 }
