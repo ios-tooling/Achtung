@@ -105,8 +105,8 @@ import Combine
 				self.currentToast = next
 			}
 			
-			dismissToastTimer = Timer.scheduledTimer(withTimeInterval: next.duration, repeats: false) { _ in
-				Task { @MainActor [weak self] in
+			dismissToastTimer = Timer.scheduledTimer(withTimeInterval: next.duration, repeats: false) { [weak self] _ in
+				Task { @MainActor in
 					self?.dismissToast(next)
 				}
 			}
@@ -125,8 +125,8 @@ import Combine
 			currentToast = nil
 		}
 		
-		nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideToastDuration, repeats: false) { _ in
-			Task { @MainActor [weak self] in self?.showNextToast() }
+		nextToastTimer = Timer.scheduledTimer(withTimeInterval: Achtung.hideToastDuration, repeats: false) { [weak self] _ in
+			Task { @MainActor in self?.showNextToast() }
 		}
 	}
 	
