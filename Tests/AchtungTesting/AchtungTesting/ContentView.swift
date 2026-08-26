@@ -117,6 +117,8 @@ struct ContentView: View {
                     }
                 }
 
+                if #available(iOS 17.0, macOS 14.0, *) { BubbleButtons() }
+
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Errors")
                         .font(.headline)

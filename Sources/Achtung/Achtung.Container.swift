@@ -46,6 +46,11 @@ extension Achtung {
 					ToastView(toast: toast)
 						.zIndex(100)
 				}
+
+				if #available(iOS 17.0, macOS 14.0, watchOS 10.0, *) {
+					Achtung.BubbleLayer()
+						.zIndex(200)
+				}
 			}
 			.onChange(of: achtung.pendingAlerts) { alerts in
 				#if os(iOS)
