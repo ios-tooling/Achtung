@@ -17,9 +17,10 @@ extension Achtung {
 		
 		@ViewBuilder var alerts: some View {
 			if #available(iOS 14.0, *) {
-				let count = achtung.pendingAlerts.count - 1
-				ForEach(achtung.pendingAlerts.indices, id: \.self) { index in
-					Achtung.AlertView(alert: achtung.pendingAlerts[count - index])
+				let custom = achtung.customAlerts
+				let count = custom.count - 1
+				ForEach(custom.indices, id: \.self) { index in
+					Achtung.AlertView(alert: custom[count - index])
 						.offset(x: -CGFloat(count - index) * 10, y: -CGFloat(count - index) * 10)
 				}
 			}
@@ -27,15 +28,16 @@ extension Achtung {
 		
 		public var body: some View {
 			ZStack() {
-				if !achtung.pendingAlerts.isEmpty {
+				// native alerts dim the screen themselves; the scrim is for Achtung's own cards
+				if !achtung.customAlerts.isEmpty {
 					Rectangle()
 						.fill(Color.black.opacity(0.5))
 						.ignoresSafeArea(.all)
 						.allowsHitTesting(true)
 						.transition(.opacity)
 						.onTapGesture {
-							if Achtung.instance.pendingAlerts.first?.tapOutsideToDismiss == true {
-								Achtung.instance.remove(nil)
+							if let first = Achtung.instance.customAlerts.first, first.tapOutsideToDismiss {
+								Achtung.instance.remove(first)
 							}
 						}
 					
@@ -52,10 +54,26 @@ extension Achtung {
 						.zIndex(200)
 				}
 			}
+			.modifier(NativeAlertHost())
 			.onChange(of: achtung.pendingAlerts) { alerts in
 				#if os(iOS)
 					Achtung.instance.hostWindow?.isAlertVisible = !alerts.isEmpty
 				#endif
+			}
+		}
+	}
+}
+
+@available(macOS 10.15, iOS 13.0, *)
+extension Achtung {
+	/// The native presenter needs newer SwiftUI than the container's floor; older systems draw
+	/// every alert as a card.
+	struct NativeAlertHost: ViewModifier {
+		func body(content: Content) -> some View {
+			if #available(iOS 15.0, macOS 12, *) {
+				content.modifier(NativeAlertPresenter())
+			} else {
+				content
 			}
 		}
 	}

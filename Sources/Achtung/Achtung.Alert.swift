@@ -24,6 +24,8 @@ extension Achtung {
 		let backgroundColor: Color?
 		let borderColor: Color?
 		let tapOutsideToDismiss: Bool
+		/// Achtung's card or the system alert; nil defers to `Configuration.alertStyle`.
+		public var style: AlertStyle?
 		
 		@MainActor func buttonPressed() {
 			Achtung.instance.remove(self)
@@ -41,7 +43,7 @@ extension Achtung {
 			}
 		}
 		
-		public init(_ title: String? = nil, text: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldInfo: FieldInfo? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
+		public init(_ title: String? = nil, text: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldInfo: FieldInfo? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, style: AlertStyle? = nil, buttons: [Achtung.Button]) {
 			self.title = Text(text, title)
 			self.message = message
 			self.tag = tag
@@ -55,9 +57,10 @@ extension Achtung {
 			self.backgroundColor = background
 			self.borderColor = border
 			self.tapOutsideToDismiss = tapOutsideToDismiss
+			self.style = style
 		}
 		
-		public init(_ title: String? = nil, text: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldInfo: FieldInfo? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
+		public init(_ title: String? = nil, text: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldInfo: FieldInfo? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, style: AlertStyle? = nil, primaryButton: Achtung.Button? = nil, secondaryButton: Achtung.Button? = nil, dismissButton: Achtung.Button? = nil) {
 			self.title = Text(text, title)
 			self.message = message
 			self.tag = tag
@@ -71,6 +74,7 @@ extension Achtung {
 			self.backgroundColor = background
 			self.borderColor = border
 			self.tapOutsideToDismiss = tapOutsideToDismiss
+			self.style = style
 		}
 		
 		public static func ==(lhs: Achtung.Alert, rhs: Achtung.Alert) -> Bool { lhs.id == rhs.id }

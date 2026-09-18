@@ -114,3 +114,36 @@ struct AlertTests {
 		#expect(alert.buttons.count == 2)
 	}
 }
+
+@Suite("Alert Style")
+@MainActor
+struct AlertStyleTests {
+	@Test("An alert without a style takes the configuration's")
+	func defaultsToTheConfiguration() {
+		let achtung = Achtung.instance
+		let saved = achtung.configuration.alertStyle
+		defer { achtung.configuration.alertStyle = saved }
+
+		let alert = Achtung.Alert("Plain", buttons: [.ok()])
+		achtung.configuration.alertStyle = .custom
+		#expect(achtung.style(of: alert) == .custom)
+		achtung.configuration.alertStyle = .native
+		#expect(achtung.style(of: alert) == .native)
+	}
+
+	@Test("An alert's own style wins, and the pending list splits by it")
+	func ownStyleWinsAndPendingSplits() {
+		let achtung = Achtung.instance
+		let saved = (achtung.configuration.alertStyle, achtung.pendingAlerts)
+		defer { achtung.configuration.alertStyle = saved.0; achtung.pendingAlerts = saved.1 }
+		achtung.configuration.alertStyle = .custom
+
+		let card = Achtung.Alert("Card", buttons: [.ok()])
+		let system = Achtung.Alert("System", style: .native, buttons: [.ok()])
+		let secondSystem = Achtung.Alert("Later", style: .native, buttons: [.ok()])
+		achtung.pendingAlerts = [card, system, secondSystem]
+
+		#expect(achtung.customAlerts == [card])
+		#expect(achtung.nativeAlert == system)		// they take turns, oldest first
+	}
+}

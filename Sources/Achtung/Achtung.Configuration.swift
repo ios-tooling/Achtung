@@ -16,6 +16,8 @@ extension Achtung {
 		public internal(set) var recordedErrors: [RecordedError] = []
 		public var recordedErrorLimit = 10
 		
+		/// How alerts are drawn unless one says otherwise.
+		public var alertStyle = Achtung.AlertStyle.custom
 		public var alertBackgroundColor = Color.black
 		public var alertForegroundColor = Color.white
 		public var alertBorderColor = Color.white.opacity(0.9)
@@ -30,6 +32,7 @@ extension Achtung {
 		public static func ==(lhs: Self, rhs: Self) -> Bool {
 			if lhs.errorDisplayLevel != rhs.errorDisplayLevel { return false }
 
+			if lhs.alertStyle != rhs.alertStyle { return false }
 			if lhs.alertBorderColor != rhs.alertBorderColor { return false }
 			if lhs.alertBackgroundColor != rhs.alertBackgroundColor { return false }
 			if lhs.alertForegroundColor != rhs.alertForegroundColor { return false }

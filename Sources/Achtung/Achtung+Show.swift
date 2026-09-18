@@ -89,19 +89,19 @@ extension Achtung {
 	// MARK: - Convenience Alert Methods
 
 	/// Async version - shows an alert with title, message, and buttons
-	@MainActor public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) async {
+	@MainActor public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, style: AlertStyle? = nil, buttons: [Achtung.Button]) async {
 		guard title != nil || message != nil || buttons.isEmpty == false else { return }
 
 		if let tag, instance.pendingAlerts.first(where: { $0.tag == tag }) != nil { return }
 
-		let alert = Achtung.Alert(text: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
+		let alert = Achtung.Alert(text: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, style: style, buttons: buttons)
 		await instance.show(alert: alert)
 	}
 
 	/// Non-async wrapper
-	public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, buttons: [Achtung.Button]) {
+	public static func show(title: Text? = nil, message: Text? = nil, fieldText: Binding<String>? = nil, fieldPlaceholder: String = "", tag: String? = nil, foreground: Color? = nil, border: Color? = nil, background: Color? = nil, tapOutsideToDismiss: Bool = false, style: AlertStyle? = nil, buttons: [Achtung.Button]) {
 		Task { @MainActor in
-			await show(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, buttons: buttons)
+			await show(title: title, message: message, fieldText: fieldText, fieldPlaceholder: fieldPlaceholder, tag: tag, foreground: foreground, border: border, background: background, tapOutsideToDismiss: tapOutsideToDismiss, style: style, buttons: buttons)
 		}
 	}
 
