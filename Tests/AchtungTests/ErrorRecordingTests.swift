@@ -17,23 +17,23 @@ struct ErrorRecordingTests {
 	init() async throws {
 		// Clear recorded errors and reset filter before each test
 		Achtung.instance.clearRecord()
-		Achtung.instance.filterError = { _ in .display }
+		Achtung.instance.configuration.filterError = { _ in .display }
 	}
 
 	@Test("Recorded error limit default")
 	func recordedErrorLimit() {
 		let instance = Achtung.instance
-		#expect(instance.recordedErrorLimit == 10)
+		#expect(instance.configuration.recordedErrorLimit == 10)
 	}
 
 	@Test("Recorded error limit configurable")
 	func recordedErrorLimitConfigurable() {
 		let instance = Achtung.instance
-		instance.recordedErrorLimit = 5
-		#expect(instance.recordedErrorLimit == 5)
+		instance.configuration.recordedErrorLimit = 5
+		#expect(instance.configuration.recordedErrorLimit == 5)
 
 		// Reset to default
-		instance.recordedErrorLimit = 10
+		instance.configuration.recordedErrorLimit = 10
 	}
 
 	@Test("Record error")
@@ -70,7 +70,7 @@ struct ErrorRecordingTests {
 		instance.clearRecord()
 
 		// Set filter to ignore all errors
-		instance.filterError = { _ in .ignore }
+		instance.configuration.filterError = { _ in .ignore }
 
 		let testError = NSError(domain: "TestDomain", code: 789)
 		await instance.handle(testError, level: .standard)
@@ -79,7 +79,7 @@ struct ErrorRecordingTests {
 		#expect(instance.recordedErrors.count == 0)
 
 		// Reset filter
-		instance.filterError = { _ in .display }
+		instance.configuration.filterError = { _ in .display }
 	}
 
 	@Test("Error filter log")
@@ -89,7 +89,7 @@ struct ErrorRecordingTests {
 
 		// Set filter to log but not display
 		var filterCalled = false
-		instance.filterError = { _ in
+		instance.configuration.filterError = { _ in
 			filterCalled = true
 			return .log
 		}
@@ -101,7 +101,7 @@ struct ErrorRecordingTests {
 		#expect(filterCalled)
 
 		// Reset filter
-		instance.filterError = { _ in .display }
+		instance.configuration.filterError = { _ in .display }
 	}
 
 	@Test("Error filter replace")
@@ -116,7 +116,7 @@ struct ErrorRecordingTests {
 		var replacementReturned = false
 
 		// Set filter to replace errors
-		instance.filterError = { _ in
+		instance.configuration.filterError = { _ in
 			filterCalled = true
 			replacementReturned = true
 			return .replace(replacementError)
@@ -132,7 +132,7 @@ struct ErrorRecordingTests {
 		// not the replacement. This test verifies the filter mechanism works.
 
 		// Reset filter
-		instance.filterError = { _ in .display }
+		instance.configuration.filterError = { _ in .display }
 	}
 
 	@Test("Recorded error structure")
