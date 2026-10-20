@@ -42,6 +42,7 @@ extension Achtung {
 	}
 }
 
+@available(macOS 12, iOS 15.0, *)
 extension Achtung.Button {
 	var role: ButtonRole? {
 		switch kind {
